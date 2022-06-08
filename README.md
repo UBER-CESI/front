@@ -1,4 +1,5 @@
-# This is the official front-end application of Uber-Cesi project carried at CESI Bordeaux in 4th year
+# UBER-CESI front
+### This is the official front-end application of Uber-Cesi project carried at CESI Bordeaux in 4th year
 #### Contributors are: Axel GALAND, Nathan TIEN YOU, Arthur COPPEY and Marcus BELMONT
 
 ### To clone the repository, here are some easy instructions:
