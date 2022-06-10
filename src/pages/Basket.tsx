@@ -12,21 +12,28 @@ import "./Basket.css";
 class Basket extends React.Component {
   render() {
     return (
-      <IonPage>
-        <IonHeader>
-          <IonToolbar>
-            <IonTitle>Panier</IonTitle>
-          </IonToolbar>
-        </IonHeader>
-        <IonContent fullscreen>
-          <IonHeader collapse="condense">
+      <>
+        <IonPage>
+          <IonHeader>
             <IonToolbar>
-              <IonTitle size="large">Tab 2</IonTitle>
+              <IonTitle>Panier</IonTitle>
             </IonToolbar>
           </IonHeader>
-          <ExploreContainer name="Tab 2 page" />
-        </IonContent>
-      </IonPage>
+          <IonContent fullscreen>
+            <IonHeader collapse="condense">
+              <IonToolbar>
+                <IonTitle size="large">Tab 2</IonTitle>
+              </IonToolbar>
+            </IonHeader>
+            <ExploreContainer name="Tab 2 page" />
+          </IonContent>
+        </IonPage>
+        <style>
+          {`
+            
+          `}
+        </style>
+      </>
     );
   }
 }

@@ -9,24 +9,36 @@ import {
 import ExploreContainer from "../components/ExploreContainer";
 import "./HomePage.css";
 
-class HomePage extends React.Component {
+interface HomePageProps {
+  state: any;
+  dispatch: any;
+}
+
+class HomePage extends React.Component<HomePageProps> {
   render() {
     return (
-      <IonPage>
-        <IonHeader>
-          <IonToolbar>
-            <IonTitle>Accueil</IonTitle>
-          </IonToolbar>
-        </IonHeader>
-        <IonContent fullscreen>
-          <IonHeader collapse="condense">
+      <>
+        <IonPage>
+          <IonHeader>
             <IonToolbar>
-              <IonTitle size="large">Accueil</IonTitle>
+              <IonTitle>Accueil</IonTitle>
             </IonToolbar>
           </IonHeader>
-          <ExploreContainer name="Tab 1 page" />
-        </IonContent>
-      </IonPage>
+          <IonContent fullscreen>
+            <IonHeader collapse="condense">
+              <IonToolbar>
+                <IonTitle size="large">Accueil</IonTitle>
+              </IonToolbar>
+            </IonHeader>
+            <ExploreContainer name="Tab 1 page" />
+          </IonContent>
+        </IonPage>
+        <style>
+          {`
+            
+          `}
+        </style>
+      </>
     );
   }
 }

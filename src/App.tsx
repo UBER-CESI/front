@@ -11,10 +11,12 @@ import {
   setupIonicReact,
 } from "@ionic/react";
 import { IonReactRouter } from "@ionic/react-router";
-import { homeOutline, basket, personCircleOutline } from "ionicons/icons";
+import { homeOutline, basketOutline, personOutline } from "ionicons/icons";
 import HomePage from "./pages/HomePage";
 import Basket from "./pages/Basket";
 import Account from "./pages/Account";
+
+import { useModule } from "./store/context";
 
 /* Core CSS required for Ionic components to work properly */
 import "@ionic/react/css/core.css";
@@ -37,15 +39,16 @@ import "./theme/variables.css";
 
 setupIonicReact();
 
-class App extends React.Component {
-  render() {
-    return (
+const App: React.FC = () => {
+  const { state, dispatch } = useModule();
+  return (
+    <>
       <IonApp>
         <IonReactRouter>
           <IonTabs>
             <IonRouterOutlet>
               <Route exact path="/homePage">
-                <HomePage />
+                <HomePage state={state} dispatch={dispatch} />
               </Route>
               <Route exact path="/basket">
                 <Basket />
@@ -64,19 +67,24 @@ class App extends React.Component {
                 <IonLabel>Accueil</IonLabel>
               </IonTabButton>
               <IonTabButton tab="basket" href="/basket">
-                <IonIcon icon={basket} />
+                <IonIcon icon={basketOutline} />
                 <IonLabel>Panier</IonLabel>
               </IonTabButton>
               <IonTabButton tab="account" href="/account">
-                <IonIcon icon={personCircleOutline} />
+                <IonIcon icon={personOutline} />
                 <IonLabel>Mon compte</IonLabel>
               </IonTabButton>
             </IonTabBar>
           </IonTabs>
         </IonReactRouter>
       </IonApp>
-    );
-  }
-}
+      <style>
+        {`
+            
+          `}
+      </style>
+    </>
+  );
+};
 
 export default App;
