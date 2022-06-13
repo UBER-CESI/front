@@ -1,0 +1,19 @@
+.page-header {
+    background-color: white;
+    border: 1px solid #ddd;
+}
+
+.page-header-logo {
+    position: absolute;
+    left: 10px;
+}
+
+.page-header-close {
+    position: absolute;
+    right: 10px;
+    top: 5px;
+}
+
+.register-login-confirmation {
+    margin-top: 20px;
+}

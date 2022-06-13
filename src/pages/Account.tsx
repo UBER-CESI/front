@@ -2,31 +2,39 @@ import React from "react";
 import {
   IonContent,
   IonHeader,
+  IonIcon,
   IonPage,
   IonTitle,
   IonToolbar,
 } from "@ionic/react";
-import ExploreContainer from "../components/ExploreContainer";
-import "./Account.css";
+import { fastFoodOutline } from "ionicons/icons";
 
-class Account extends React.Component {
+interface AccountProps {
+  state: any;
+  dispatch: any;
+}
+
+class Account extends React.Component<AccountProps> {
   render() {
     return (
-      <IonPage>
-        <IonHeader>
-          <IonToolbar>
-            <IonTitle>Mon compte</IonTitle>
-          </IonToolbar>
-        </IonHeader>
-        <IonContent fullscreen>
-          <IonHeader collapse="condense">
+      <>
+        <IonPage>
+          <IonHeader>
             <IonToolbar>
-              <IonTitle size="large">Tab 3</IonTitle>
+              <IonTitle>
+                Mon compte
+                <IonIcon icon={fastFoodOutline} className="page-header-logo" />
+              </IonTitle>
             </IonToolbar>
           </IonHeader>
-          <ExploreContainer name="Tab 3 page" />
-        </IonContent>
-      </IonPage>
+          <IonContent fullscreen></IonContent>
+        </IonPage>
+        <style>
+          {`
+            
+          `}
+        </style>
+      </>
     );
   }
 }

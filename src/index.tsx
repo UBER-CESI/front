@@ -3,10 +3,13 @@ import ReactDOM from "react-dom";
 import App from "./App";
 import * as serviceWorkerRegistration from "./serviceWorkerRegistration";
 import reportWebVitals from "./reportWebVitals";
+import { ModuleProvider } from "./store/context";
 
 ReactDOM.render(
   <>
-    <App />
+    <ModuleProvider>
+      <App />
+    </ModuleProvider>
   </>,
   document.getElementById("root")
 );
