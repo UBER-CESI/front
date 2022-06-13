@@ -15,8 +15,7 @@ import { homeOutline, basketOutline, personOutline } from "ionicons/icons";
 import HomePage from "./pages/HomePage";
 import Basket from "./pages/Basket";
 import Account from "./pages/Account";
-
-import { useModule } from "./store/context";
+import WelcomePage from "./pages/WelcomePage";
 
 /* Core CSS required for Ionic components to work properly */
 import "@ionic/react/css/core.css";
@@ -37,6 +36,11 @@ import "@ionic/react/css/display.css";
 /* Theme variables */
 import "./theme/variables.css";
 
+/* Global theme */
+import "./theme/global.css";
+
+import { useModule } from "./store/context";
+
 setupIonicReact();
 
 const App: React.FC = () => {
@@ -44,39 +48,42 @@ const App: React.FC = () => {
   return (
     <>
       <IonApp>
-        <IonReactRouter>
-          <IonTabs>
-            <IonRouterOutlet>
-              <Route exact path="/homePage">
-                <HomePage state={state} dispatch={dispatch} />
-              </Route>
-              <Route exact path="/basket">
-                <Basket />
-              </Route>
-              <Route path="/account">
-                <Account />
-              </Route>
-              <Route exact path="/">
-                <Redirect to="/homePage" />
-              </Route>
-            </IonRouterOutlet>
-
-            <IonTabBar slot="bottom">
-              <IonTabButton tab="homePage" href="/homePage">
-                <IonIcon icon={homeOutline} />
-                <IonLabel>Accueil</IonLabel>
-              </IonTabButton>
-              <IonTabButton tab="basket" href="/basket">
-                <IonIcon icon={basketOutline} />
-                <IonLabel>Panier</IonLabel>
-              </IonTabButton>
-              <IonTabButton tab="account" href="/account">
-                <IonIcon icon={personOutline} />
-                <IonLabel>Mon compte</IonLabel>
-              </IonTabButton>
-            </IonTabBar>
-          </IonTabs>
-        </IonReactRouter>
+        {state.userAuth ? (
+          <IonReactRouter>
+            <IonTabs>
+              <IonRouterOutlet>
+                <Route exact path="/homePage">
+                  <HomePage state={state} dispatch={dispatch} />
+                </Route>
+                <Route exact path="/basket">
+                  <Basket state={state} dispatch={dispatch} />
+                </Route>
+                <Route path="/account">
+                  <Account state={state} dispatch={dispatch} />
+                </Route>
+                <Route exact path="/">
+                  <Redirect to="/homePage" />
+                </Route>
+              </IonRouterOutlet>
+              <IonTabBar slot="bottom">
+                <IonTabButton tab="homePage" href="/homePage">
+                  <IonIcon icon={homeOutline} />
+                  <IonLabel>Accueil</IonLabel>
+                </IonTabButton>
+                <IonTabButton tab="basket" href="/basket">
+                  <IonIcon icon={basketOutline} />
+                  <IonLabel>Panier</IonLabel>
+                </IonTabButton>
+                <IonTabButton tab="account" href="/account">
+                  <IonIcon icon={personOutline} />
+                  <IonLabel>Mon compte</IonLabel>
+                </IonTabButton>
+              </IonTabBar>
+            </IonTabs>
+          </IonReactRouter>
+        ) : (
+          <WelcomePage state={state} dispatch={dispatch} />
+        )}
       </IonApp>
       <style>
         {`
