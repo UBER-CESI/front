@@ -2,12 +2,10 @@ import React from "react";
 import {
   IonContent,
   IonHeader,
-  IonIcon,
   IonPage,
   IonTitle,
   IonToolbar,
 } from "@ionic/react";
-import { fastFoodOutline } from "ionicons/icons";
 
 interface AccountProps {
   state: any;
@@ -22,8 +20,14 @@ class Account extends React.Component<AccountProps> {
           <IonHeader>
             <IonToolbar>
               <IonTitle>
+                <img
+                  src="/assets/icon/favicon.png"
+                  alt="Logo"
+                  width={"32px"}
+                  height={"32px"}
+                  className="page-header-logo"
+                />
                 Mon compte
-                <IonIcon icon={fastFoodOutline} className="page-header-logo" />
               </IonTitle>
             </IonToolbar>
           </IonHeader>

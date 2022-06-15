@@ -2,15 +2,14 @@ import React from "react";
 import {
   IonContent,
   IonHeader,
-  IonIcon,
   IonPage,
   IonTitle,
   IonToolbar,
 } from "@ionic/react";
-import { fastFoodOutline } from "ionicons/icons";
 
 import RestaurantList from "../components/HomePage/RestaurantList";
 import AddressDisplay from "../components/HomePage/AddressDisplay";
+import AddressModal from "../components/HomePage/AddressPicker";
 
 interface HomePageProps {
   state: any;
@@ -25,7 +24,13 @@ class HomePage extends React.Component<HomePageProps> {
           <IonHeader>
             <IonToolbar>
               <IonTitle className="page-header">
-                <IonIcon icon={fastFoodOutline} className="page-header-logo" />
+                <img
+                  src="/assets/icon/favicon.png"
+                  alt="Logo"
+                  width={"32px"}
+                  height={"32px"}
+                  className="page-header-logo"
+                />
                 Accueil
               </IonTitle>
             </IonToolbar>
@@ -36,6 +41,10 @@ class HomePage extends React.Component<HomePageProps> {
               dispatch={this.props.dispatch}
             />
             <RestaurantList
+              state={this.props.state}
+              dispatch={this.props.dispatch}
+            />
+            <AddressModal
               state={this.props.state}
               dispatch={this.props.dispatch}
             />

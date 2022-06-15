@@ -2,13 +2,16 @@ import { createContext, useContext, useReducer } from "react";
 import type { ReactNode } from "react";
 
 let restaurantsJSON = require("../restaurants.json");
+let basketJSON = require("../basket.json");
 
 const defaultState = {
   userAuth: true,
   restaurants: restaurantsJSON,
   loginModal: false,
   registerModal: false,
-  address: "28 bis chemin de Tanaïs, 33320 Le Taillan-Médoc",
+  addressModal: false,
+  address: "264 Bd Godard, 33300 Bordeaux",
+  basket: basketJSON,
 };
 
 export type ActionType =
@@ -16,7 +19,9 @@ export type ActionType =
   | "SET_RESTAURANTS"
   | "CHANGE_LOGIN_MODAL"
   | "CHANGE_REGISTER_MODAL"
-  | "SET_ADDRESS";
+  | "SET_ADDRESS"
+  | "SET_BASKET"
+  | "CHANGE_ADDRESS_MODAL";
 
 export type ActionWithParamsType = {
   type: ActionType;
@@ -43,6 +48,10 @@ function moduleReducer(state: StateType, action: ActionWithParamsType) {
       return { ...state, registerModal: !state.registerModal };
     case "SET_ADDRESS":
       return { ...state, address: action.payload };
+    case "SET_BASKET":
+      return { ...state, basket: action.payload };
+    case "CHANGE_ADDRESS_MODAL":
+      return { ...state, addressModal: !state.addressModal };
   }
   return {
     ...state,
