@@ -17,7 +17,7 @@ interface Menu {
     restaurantId: string;
 };
 
-interface Item {
+export interface Item {
     name: string;
     description: string;
     allergens: Array<string>;

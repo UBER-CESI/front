@@ -12,7 +12,7 @@ export function getDelivererList() {
 };
 
 export function createDeliverer(deliverer: Deliverer) {
-    return PUT(delivererUrl + "register", deliverer);
+    return PUT(delivererUrl, deliverer);
 };
 
 export function getDeliverer(id: number) {
