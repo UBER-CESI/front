@@ -1,32 +1,30 @@
-{
-    "list": [
-        {
-            "id": 0,
-            "name": "Restaurant 1",
-            "price": "€€",
-            "delivery": "2,69",
-            "image": "/images/restaurant.png"
-        },
-        {
-            "id": 1,
-            "name": "Restaurant 2",
-            "price": "€",
-            "delivery": "4,20",
-            "image": "/images/restaurant.png"
-        },
-        {
-            "id": 2,
-            "name": "Restaurant 3",
-            "price": "€€€",
-            "delivery": "2",
-            "image": "/images/restaurant.png"
-        },
-        {
-            "id": 3,
-            "name": "Restaurant 4",
-            "price": "€€",
-            "delivery": "2,69",
-            "image": "/images/restaurant.png"
-        }
-    ]
-}
+[
+    {
+        "id": 0,
+        "name": "Restaurant 1",
+        "price": "€€",
+        "delivery": "2,69",
+        "image": "/images/restaurant.png"
+    },
+    {
+        "id": 1,
+        "name": "Restaurant 2",
+        "price": "€",
+        "delivery": "4,20",
+        "image": "/images/restaurant.png"
+    },
+    {
+        "id": 2,
+        "name": "Restaurant 3",
+        "price": "€€€",
+        "delivery": "2",
+        "image": "/images/restaurant.png"
+    },
+    {
+        "id": 3,
+        "name": "Restaurant 4",
+        "price": "€€",
+        "delivery": "2,69",
+        "image": "/images/restaurant.png"
+    }
+]

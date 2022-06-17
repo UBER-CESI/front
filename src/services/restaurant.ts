@@ -2,7 +2,7 @@ import { POST, GET, PUT, DELETE } from "./index";
 
 const restaurantUrl: string = "restaurant/";
 
-interface Restaurant {
+export interface Restaurant {
     name: string;
     address: string;
     phoneNumber: string;
@@ -26,16 +26,20 @@ export interface Item {
     restaurantId: string;
 };
 
-interface Option {
+export interface Option {
     name: string;
     multiple: boolean;
     required: boolean;
     values: Array<Value>;
 };
 
-interface Value {
+export interface Value {
     value: string;
     priceOffset: number;
+};
+
+export function getRestaurantList() {
+    return GET("restaurant");
 };
 
 export function createRestaurant(restaurant: Restaurant) {

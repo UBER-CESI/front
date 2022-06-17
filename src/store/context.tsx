@@ -3,6 +3,8 @@ import type { ReactNode } from "react";
 
 let restaurantsJSON = require("../restaurants.json");
 let basketJSON = require("../basket.json");
+let userJSON = require("../user.json");
+let ordersJSON = require("../orders.json");
 
 const defaultState = {
   userAuth: true,
@@ -12,6 +14,15 @@ const defaultState = {
   addressModal: false,
   address: "264 Bd Godard, 33300 Bordeaux",
   basket: basketJSON,
+  userInfos: userJSON,
+  accountModals: {
+    orders: false,
+    paymentsInformation: false,
+    profile: false,
+    promotions: false,
+    about: false,
+  },
+  orders: ordersJSON,
 };
 
 export type ActionType =
@@ -21,7 +32,10 @@ export type ActionType =
   | "CHANGE_REGISTER_MODAL"
   | "SET_ADDRESS"
   | "SET_BASKET"
-  | "CHANGE_ADDRESS_MODAL";
+  | "CHANGE_ADDRESS_MODAL"
+  | "CHANGE_USER_INFOS"
+  | "SET_ACCOUNT_MODALS"
+  | "SET_ORDERS";
 
 export type ActionWithParamsType = {
   type: ActionType;
@@ -37,6 +51,7 @@ const ModuleContext = createContext<
 export default ModuleContext;
 
 function moduleReducer(state: StateType, action: ActionWithParamsType) {
+  console.log("action is", action);
   switch (action.type) {
     case "CHANGE_USER_AUTH":
       return { ...state, userAuth: !state.userAuth };
@@ -52,10 +67,15 @@ function moduleReducer(state: StateType, action: ActionWithParamsType) {
       return { ...state, basket: action.payload };
     case "CHANGE_ADDRESS_MODAL":
       return { ...state, addressModal: !state.addressModal };
+    case "CHANGE_USER_INFOS":
+      return { ...state, userInfos: action.payload };
+    case "SET_ACCOUNT_MODALS":
+      return { ...state, accountModals: action.payload };
+    case "SET_ORDERS":
+      return { ...state, orders: action.payload };
+    default:
+      return state;
   }
-  return {
-    ...state,
-  };
 }
 
 export function ModuleProvider({ children }: { children: ReactNode }) {

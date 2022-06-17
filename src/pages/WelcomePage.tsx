@@ -10,10 +10,6 @@ interface WelcomePageProps {
 }
 
 class WelcomePage extends React.Component<WelcomePageProps> {
-  componentDidMount = () => {
-    document.title = "CESI Eats";
-  };
-
   render() {
     return (
       <>
@@ -31,7 +27,6 @@ class WelcomePage extends React.Component<WelcomePageProps> {
               <IonButton
                 onClick={() => {
                   this.props.dispatch({ type: "CHANGE_LOGIN_MODAL" });
-                  document.title = "CESI Eats - Connexion";
                 }}
                 className="register-login-button btn-left"
               >
@@ -40,7 +35,6 @@ class WelcomePage extends React.Component<WelcomePageProps> {
               <IonButton
                 onClick={() => {
                   this.props.dispatch({ type: "CHANGE_REGISTER_MODAL" });
-                  document.title = "CESI Eats - Inscription";
                 }}
                 className="register-login-button btn-right"
               >

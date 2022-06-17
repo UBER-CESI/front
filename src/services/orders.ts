@@ -4,12 +4,13 @@ import { Item } from "./restaurant";
 const orderUrl: string = "order";
 const orderSlashUrl: string = "order/";
 
-interface Order {
+export interface Order {
     customerId: string;
     delivererId: string;
     restaurantId: string;
     totalPrice: number;
     tipAmount: number;
+    status: string;
     items: Array<Item>;
 };
 

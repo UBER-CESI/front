@@ -40,7 +40,7 @@ interface BasketItem {
 class Basket extends React.Component<BasketProps> {
   changeItemQuantity = (item: BasketItem, quantity: number) => {
     const { dispatch } = this.props;
-    if (quantity > 0 && quantity < 10) {
+    if (quantity > 0 && quantity <= 10) {
       dispatch({
         type: "SET_BASKET",
         payload: {
@@ -76,7 +76,7 @@ class Basket extends React.Component<BasketProps> {
     basket.items.forEach((item: BasketItem) => {
       total += item.price * item.quantity;
     });
-    return total;
+    return Math.round(total * 100) / 100;
   };
 
   render() {
@@ -121,12 +121,13 @@ class Basket extends React.Component<BasketProps> {
                           )}
                         </IonLabel>
                         <IonNote slot="end" color="primary">
-                          {item.price * item.quantity}€
+                          {Math.round(item.price * item.quantity * 100) / 100}€
                         </IonNote>
                         <IonNote slot="end">
                           <IonButton
                             color="success"
                             size="small"
+                            className="quantity-buttons"
                             onClick={() => {
                               this.changeItemQuantity(item, item.quantity + 1);
                             }}
@@ -144,7 +145,7 @@ class Basket extends React.Component<BasketProps> {
                             value={item.quantity}
                             className="ion-text-center"
                             min="0"
-                            max="10"
+                            max="11"
                             onInput={(e: any) => {
                               this.props.dispatch({
                                 type: "SET_BASKET",
@@ -237,7 +238,11 @@ class Basket extends React.Component<BasketProps> {
               width: 10px;
             }
             .basket-quantity-input {
-              width: 20px;
+              width: 28px;
+              margin: 0;
+              margin-left: 11px;
+            }
+            .quantity-buttons {
               margin: 0;
               margin-left: 11px;
             }

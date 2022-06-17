@@ -49,38 +49,40 @@ const App: React.FC = () => {
     <>
       <IonApp>
         {state.userAuth ? (
-          <IonReactRouter>
-            <IonTabs>
-              <IonRouterOutlet>
-                <Route exact path="/homePage">
-                  <HomePage state={state} dispatch={dispatch} />
-                </Route>
-                <Route exact path="/basket">
-                  <Basket state={state} dispatch={dispatch} />
-                </Route>
-                <Route path="/account">
-                  <Account state={state} dispatch={dispatch} />
-                </Route>
-                <Route exact path="/">
-                  <Redirect to="/homePage" />
-                </Route>
-              </IonRouterOutlet>
-              <IonTabBar slot="bottom">
-                <IonTabButton tab="homePage" href="/homePage">
-                  <IonIcon icon={homeOutline} />
-                  <IonLabel>Accueil</IonLabel>
-                </IonTabButton>
-                <IonTabButton tab="basket" href="/basket">
-                  <IonIcon icon={basketOutline} />
-                  <IonLabel>Panier</IonLabel>
-                </IonTabButton>
-                <IonTabButton tab="account" href="/account">
-                  <IonIcon icon={personOutline} />
-                  <IonLabel>Mon compte</IonLabel>
-                </IonTabButton>
-              </IonTabBar>
-            </IonTabs>
-          </IonReactRouter>
+          <>
+            <IonReactRouter>
+              <IonTabs>
+                <IonRouterOutlet>
+                  <Route exact path="/homePage">
+                    <HomePage state={state} dispatch={dispatch} />
+                  </Route>
+                  <Route exact path="/basket">
+                    <Basket state={state} dispatch={dispatch} />
+                  </Route>
+                  <Route path="/account">
+                    <Account state={state} dispatch={dispatch} />
+                  </Route>
+                  <Route exact path="/">
+                    <Redirect to="/homePage" />
+                  </Route>
+                </IonRouterOutlet>
+                <IonTabBar slot="bottom">
+                  <IonTabButton tab="homePage" href="/homePage">
+                    <IonIcon icon={homeOutline} />
+                    <IonLabel>Accueil</IonLabel>
+                  </IonTabButton>
+                  <IonTabButton tab="basket" href="/basket">
+                    <IonIcon icon={basketOutline} />
+                    <IonLabel>Panier</IonLabel>
+                  </IonTabButton>
+                  <IonTabButton tab="account" href="/account">
+                    <IonIcon icon={personOutline} />
+                    <IonLabel>Mon compte</IonLabel>
+                  </IonTabButton>
+                </IonTabBar>
+              </IonTabs>
+            </IonReactRouter>
+          </>
         ) : (
           <WelcomePage state={state} dispatch={dispatch} />
         )}

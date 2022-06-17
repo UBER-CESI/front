@@ -63,7 +63,6 @@ class RegisterModal extends React.Component<RegisterModalProps, IState> {
     this.props.dispatch({
       type: "CHANGE_REGISTER_MODAL",
     });
-    document.title = "CESI Eats";
     this.setState({
       email: "",
       password: "",

@@ -10,7 +10,7 @@ class RestaurantList extends React.Component<RestaurantListProps> {
   render() {
     return (
       <>
-        {this.props.state.restaurants.list.map((restaurant: any) => {
+        {this.props.state.restaurants.map((restaurant: any) => {
           return (
             <IonCard button={true} key={restaurant.id}>
               <img

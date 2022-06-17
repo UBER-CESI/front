@@ -51,7 +51,6 @@ class LogInModal extends React.Component<LogInModalProps, IState> {
     this.props.dispatch({
       type: "CHANGE_LOGIN_MODAL",
     });
-    document.title = "CESI Eats";
     this.setState({
       email: "",
       password: "",
