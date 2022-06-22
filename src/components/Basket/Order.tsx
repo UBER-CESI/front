@@ -70,6 +70,7 @@ class Order extends React.Component<OrderProps> {
       customerId: "0",
       restaurantId: "0",
       delivererId: "0",
+      address: this.props.state.address,
       totalPrice: this.calculateTotal(),
       tipAmount: 0,
       status: "paid",
