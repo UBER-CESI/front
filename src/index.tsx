@@ -4,11 +4,21 @@ import App from "./App";
 import * as serviceWorkerRegistration from "./serviceWorkerRegistration";
 import reportWebVitals from "./reportWebVitals";
 import { ModuleProvider } from "./store/context";
+import { PayPalScriptProvider } from "@paypal/react-paypal-js";
+
+const options = {
+  "client-id":
+    "ATpPF-6175Rgru0Ajqekf5YAKSM4sqOuCIBjCz0BxqCX63n1z_CYtxPQjU9-bF2O2T8sgh4vrsV5fk8o",
+  currency: "EUR",
+  locale: "fr_FR",
+};
 
 ReactDOM.render(
   <>
     <ModuleProvider>
-      <App />
+      <PayPalScriptProvider options={options}>
+        <App />
+      </PayPalScriptProvider>
     </ModuleProvider>
   </>,
   document.getElementById("root")

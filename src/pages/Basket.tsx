@@ -16,6 +16,8 @@ import {
   IonToolbar,
 } from "@ionic/react";
 import { Link } from "react-router-dom";
+import { Option } from "../models/itemOption";
+import { Value } from "../models/itemOptionValue";
 
 interface BasketProps {
   state: any;
@@ -23,18 +25,18 @@ interface BasketProps {
 }
 
 interface Basket {
-  restaurant_id: number;
+  restaurant_id: string;
   restaurant_name: string;
   items: [BasketItem];
 }
 
 interface BasketItem {
-  id: number;
+  id: any;
   name: string;
   price: number;
   quantity: number;
   image: string;
-  option: Array<string>;
+  options: Array<Option>;
 }
 
 class Basket extends React.Component<BasketProps> {
@@ -68,6 +70,12 @@ class Basket extends React.Component<BasketProps> {
         },
       });
     }
+    if (this.props.state.basket.items.length === 0) {
+      dispatch({
+        type: "SET_BASKET",
+        payload: {},
+      });
+    }
   };
 
   calculateTotal = () => {
@@ -98,92 +106,125 @@ class Basket extends React.Component<BasketProps> {
             </IonToolbar>
           </IonHeader>
           <IonContent fullscreen className="ion-text-center">
-            {this.props.state.basket.items.length ? (
+            {this.props.state.basket.items?.length > 0 ? (
               <>
                 <IonList>
                   <IonListHeader>
                     {this.props.state.basket.restaurant_name}
                   </IonListHeader>
-                  {this.props.state.basket.items.map((item: BasketItem) => {
-                    return (
-                      <IonItem key={item.id}>
-                        <IonLabel>
-                          <h2>{item.name}</h2>
-                          {item.option && (
-                            <p>
-                              Options :{" "}
-                              <ul>
-                                {item.option?.map((o: string, i: number) => {
-                                  return <li key={i}>{o}</li>;
-                                })}
-                              </ul>
-                            </p>
-                          )}
-                        </IonLabel>
-                        <IonNote slot="end" color="primary">
-                          {Math.round(item.price * item.quantity * 100) / 100}€
-                        </IonNote>
-                        <IonNote slot="end">
-                          <IonButton
-                            color="success"
-                            size="small"
-                            className="quantity-buttons"
-                            onClick={() => {
-                              this.changeItemQuantity(item, item.quantity + 1);
-                            }}
+                  {this.props.state.basket.items.map(
+                    (item: BasketItem, i: number) => {
+                      return (
+                        <IonItem key={i}>
+                          <IonLabel>
+                            <h2>{item.name}</h2>
+                            {item.options && (
+                              <>
+                                <b>Options :</b>{" "}
+                                {item.options.map(
+                                  (option: Option, j: number) => {
+                                    return (
+                                      <div key={j}>
+                                        {option.values.length > 0 && (
+                                          <>
+                                            <br />
+                                            {option.name}
+                                            <ul>
+                                              {option.values.map(
+                                                (value: Value, k: number) => {
+                                                  return (
+                                                    <div key={k}>
+                                                      {value && (
+                                                        <li key={k}>
+                                                          {value.value}
+                                                        </li>
+                                                      )}
+                                                    </div>
+                                                  );
+                                                }
+                                              )}
+                                            </ul>
+                                          </>
+                                        )}
+                                      </div>
+                                    );
+                                  }
+                                )}
+                              </>
+                            )}
+                          </IonLabel>
+                          <IonNote slot="end" color="primary">
+                            {Math.round(item.price * item.quantity * 100) / 100}
+                            €
+                          </IonNote>
+                          <IonNote slot="end">
+                            <IonButton
+                              color="success"
+                              size="small"
+                              className="quantity-buttons"
+                              onClick={() => {
+                                this.changeItemQuantity(
+                                  item,
+                                  item.quantity + 1
+                                );
+                              }}
+                            >
+                              +
+                            </IonButton>
+                          </IonNote>
+                          <IonNote
+                            slot="end"
+                            color="primary"
+                            className="basket-quantity-input"
                           >
-                            +
-                          </IonButton>
-                        </IonNote>
-                        <IonNote
-                          slot="end"
-                          color="primary"
-                          className="basket-quantity-input"
-                        >
-                          <IonInput
-                            type="number"
-                            value={item.quantity}
-                            className="ion-text-center"
-                            min="0"
-                            max="11"
-                            onInput={(e: any) => {
-                              this.props.dispatch({
-                                type: "SET_BASKET",
-                                payload: {
-                                  restaurant_id:
-                                    this.props.state.basket.restaurant_id,
-                                  restaurant_name:
-                                    this.props.state.basket.restaurant_name,
-                                  items: this.props.state.basket.items.map(
-                                    (i: BasketItem) => {
-                                      if (i.id === item.id) {
-                                        return {
-                                          ...i,
-                                          quantity: e.target.value,
-                                        };
+                            <IonInput
+                              type="number"
+                              value={item.quantity}
+                              className="ion-text-center"
+                              min="0"
+                              max="11"
+                              onInput={(e: any) => {
+                                this.props.dispatch({
+                                  type: "SET_BASKET",
+                                  payload: {
+                                    restaurant_id:
+                                      this.props.state.basket.restaurant_id,
+                                    restaurant_name:
+                                      this.props.state.basket.restaurant_name,
+                                    items: this.props.state.basket.items.map(
+                                      (it: BasketItem) => {
+                                        if (it.id === item.id) {
+                                          return {
+                                            ...it,
+                                            quantity: e.target.value,
+                                          };
+                                        }
+                                        return it;
                                       }
-                                      return i;
-                                    }
-                                  ),
-                                },
-                              });
-                            }}
-                          />
-                        </IonNote>
-                        <IonNote slot="end">
-                          <IonButton
-                            color="danger"
-                            size="small"
-                            onClick={() => {
-                              this.changeItemQuantity(item, item.quantity - 1);
-                            }}
-                          >
-                            -
-                          </IonButton>
-                        </IonNote>
-                      </IonItem>
-                    );
-                  })}
+                                    ),
+                                  },
+                                });
+                              }}
+                            />
+                          </IonNote>
+                          <IonNote slot="end">
+                            <IonButton
+                              color="danger"
+                              size="small"
+                              onClick={() => {
+                                this.changeItemQuantity(
+                                  item,
+                                  item.quantity - 1
+                                );
+                              }}
+                            >
+                              -
+                            </IonButton>
+                          </IonNote>
+                        </IonItem>
+                      );
+                    }
+                  )}
                 </IonList>
                 <IonText>
                   <h2>Total : {this.calculateTotal()}€</h2>

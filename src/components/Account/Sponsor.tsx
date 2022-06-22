@@ -12,6 +12,7 @@ import {
   IonToolbar,
 } from "@ionic/react";
 import { checkmarkDoneOutline } from "ionicons/icons";
+import { Clipboard } from "@capacitor/clipboard";
 
 interface SponsorProps {
   state: any;
@@ -49,8 +50,18 @@ class Sponsor extends React.Component<SponsorProps, IState> {
     });
   };
 
-  copyToClipboard = () => {
-    navigator.clipboard.writeText(this.state.sponsorCode);
+  copyToClipboard = async () => {
+    await Clipboard.write({
+      string: this.state.sponsorCode,
+    })
+      .then(() => {
+        this.setState({ toast: true });
+      })
+      .catch(() => {
+        navigator.clipboard.writeText(this.state.sponsorCode).then(() => {
+          this.setState({ toast: true });
+        });
+      });
   };
 
   render() {
@@ -101,7 +112,6 @@ class Sponsor extends React.Component<SponsorProps, IState> {
               <IonButton
                 onClick={() => {
                   this.copyToClipboard();
-                  this.setState({ toast: true });
                 }}
                 size="default"
                 className="ion-text-center"

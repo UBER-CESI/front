@@ -2,9 +2,9 @@ import { createContext, useContext, useReducer } from "react";
 import type { ReactNode } from "react";
 
 let restaurantsJSON = require("../restaurants.json");
-let basketJSON = require("../basket.json");
 let userJSON = require("../user.json");
 let ordersJSON = require("../orders.json");
+let basketJSON = require("../basket.json");
 
 const defaultState = {
   userAuth: true,
@@ -23,6 +23,18 @@ const defaultState = {
     about: false,
   },
   orders: ordersJSON,
+  selectedRestaurantId: 0,
+  menus: {
+    0: require("../restaurantMenus-0.json"),
+    1: require("../restaurantMenus-1.json"),
+    2: require("../restaurantMenus-2.json"),
+    3: require("../restaurantMenus-3.json"),
+  },
+  userType: {
+    client: true,
+    restaurant: false,
+    deliverer: false,
+  },
 };
 
 export type ActionType =
@@ -35,7 +47,10 @@ export type ActionType =
   | "CHANGE_ADDRESS_MODAL"
   | "CHANGE_USER_INFOS"
   | "SET_ACCOUNT_MODALS"
-  | "SET_ORDERS";
+  | "SET_ORDERS"
+  | "SET_SELECTED_RESTAURANT_ID"
+  | "SET_MENUS"
+  | "SET_USER_TYPE";
 
 export type ActionWithParamsType = {
   type: ActionType;
@@ -73,6 +88,12 @@ function moduleReducer(state: StateType, action: ActionWithParamsType) {
       return { ...state, accountModals: action.payload };
     case "SET_ORDERS":
       return { ...state, orders: action.payload };
+    case "SET_SELECTED_RESTAURANT_ID":
+      return { ...state, selectedRestaurantId: action.payload };
+    case "SET_MENUS":
+      return { ...state, menus: action.payload };
+    case "SET_USER_TYPE":
+      return { ...state, userType: action.payload };
     default:
       return state;
   }

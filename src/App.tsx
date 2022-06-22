@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { Redirect, Route } from "react-router-dom";
 import {
   IonApp,
@@ -16,6 +16,7 @@ import HomePage from "./pages/HomePage";
 import Basket from "./pages/Basket";
 import Account from "./pages/Account";
 import WelcomePage from "./pages/WelcomePage";
+import Order from "./components/Basket/Order";
 
 /* Core CSS required for Ionic components to work properly */
 import "@ionic/react/css/core.css";
@@ -40,15 +41,34 @@ import "./theme/variables.css";
 import "./theme/global.css";
 
 import { useModule } from "./store/context";
+import RestaurantMenu from "./components/HomePage/RestaurantMenu";
 
 setupIonicReact();
 
 const App: React.FC = () => {
+  const [loadingScreen, setLoadingScreen] = React.useState(true);
+
+  useEffect(() => {
+    setTimeout(() => {
+      setLoadingScreen(false);
+    }, 2000);
+  }, []);
+
   const { state, dispatch } = useModule();
   return (
     <>
       <IonApp>
-        {state.userAuth ? (
+        {loadingScreen ? (
+          <div className="loading-screen">
+            <div className="loading-screen-content">
+              <img
+                src="/assets/icon/cesi-eats.png"
+                alt="CESI Eats"
+                className="loading-screen-content-logo"
+              />
+            </div>
+          </div>
+        ) : state.userAuth ? (
           <>
             <IonReactRouter>
               <IonTabs>
@@ -61,6 +81,12 @@ const App: React.FC = () => {
                   </Route>
                   <Route path="/account">
                     <Account state={state} dispatch={dispatch} />
+                  </Route>
+                  <Route path="/restaurant/menu">
+                    <RestaurantMenu state={state} dispatch={dispatch} />
+                  </Route>
+                  <Route path="/order">
+                    <Order state={state} dispatch={dispatch} />
                   </Route>
                   <Route exact path="/">
                     <Redirect to="/homePage" />
@@ -89,8 +115,33 @@ const App: React.FC = () => {
       </IonApp>
       <style>
         {`
-            
-          `}
+          .loading-screen {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: #gray;
+            z-index: 9999;
+          }
+          .loading-screen-content {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 100%;
+            height: 100%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+          }
+          .loading-screen-content-logo {
+            width: 100%;
+            transform: scale(0.8);
+            border: 3px solid white;
+            border-radius: 50px;
+          }
+        `}
       </style>
     </>
   );

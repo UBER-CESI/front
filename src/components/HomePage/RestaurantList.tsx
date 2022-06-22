@@ -12,7 +12,17 @@ class RestaurantList extends React.Component<RestaurantListProps> {
       <>
         {this.props.state.restaurants.map((restaurant: any) => {
           return (
-            <IonCard button={true} key={restaurant.id}>
+            <IonCard
+              button={true}
+              key={restaurant.id}
+              routerLink={"/restaurant/menu/"}
+              onClick={() => {
+                this.props.dispatch({
+                  type: "SET_SELECTED_RESTAURANT_ID",
+                  payload: restaurant.id,
+                });
+              }}
+            >
               <img
                 src={restaurant.image}
                 className="card-image"

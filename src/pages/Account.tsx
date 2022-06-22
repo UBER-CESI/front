@@ -1,5 +1,6 @@
 import React from "react";
 import {
+  IonChip,
   IonContent,
   IonHeader,
   IonIcon,
@@ -53,6 +54,20 @@ class Account extends React.Component<AccountProps> {
               state={this.props.state}
               dispatch={this.props.dispatch}
             />
+            <div className="ion-text-center">
+              <IonChip
+                color="danger"
+                className="order-chip"
+                outline
+                onClick={() =>
+                  this.props.dispatch({ type: "CHANGE_USER_AUTH" })
+                }
+              >
+                <IonText>
+                  <h5>Déconnexion</h5>
+                </IonText>
+              </IonChip>
+            </div>
           </IonContent>
         </IonPage>
         <style>

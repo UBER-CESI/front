@@ -1,11 +1,8 @@
+import { Deliverer } from "../models/deliverer";
 import { POST, GET, PUT, DELETE } from "./index";
 
 const delivererUrl: string = "deliverer";
 const delivererSlashUrl: string = "deliverer/";
-
-interface Deliverer {
-    name: string;
-};
 
 export function getDelivererList() {
     return GET(delivererUrl);

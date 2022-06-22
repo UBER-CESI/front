@@ -1,14 +1,17 @@
 import React from "react";
 import {
+  IonAlert,
   IonButton,
   IonContent,
   IonInput,
   IonLabel,
   IonModal,
+  IonText,
   IonTitle,
   IonToast,
   IonToolbar,
 } from "@ionic/react";
+import { Clipboard } from "@capacitor/clipboard";
 
 interface LogInModalProps {
   state: any;
@@ -20,6 +23,7 @@ interface IState {
   password: string;
   toast: boolean;
   toastIsSuccess: boolean;
+  alert: boolean;
 }
 
 class LogInModal extends React.Component<LogInModalProps, IState> {
@@ -30,6 +34,7 @@ class LogInModal extends React.Component<LogInModalProps, IState> {
       password: "",
       toast: false,
       toastIsSuccess: false,
+      alert: false,
     };
   }
 
@@ -55,6 +60,20 @@ class LogInModal extends React.Component<LogInModalProps, IState> {
       email: "",
       password: "",
     });
+  };
+
+  forgottenEmail = async () => {
+    await Clipboard.write({
+      string: "admin@cesi-eats.fr",
+    })
+      .then(() => {
+        this.setState({ alert: true });
+      })
+      .catch(() => {
+        navigator.clipboard.writeText("admin@cesi-eats.fr").then(() => {
+          this.setState({ alert: true });
+        });
+      });
   };
 
   render() {
@@ -107,6 +126,31 @@ class LogInModal extends React.Component<LogInModalProps, IState> {
                 this.setState({ password: e.detail.value! });
               }}
             />
+            <br />
+            <IonText
+              onClick={() => this.forgottenEmail()}
+              color={"primary"}
+              className="forgotten-password"
+            >
+              Mot de passe oublié ?
+            </IonText>
+            <IonAlert
+              isOpen={this.state.alert}
+              onDidDismiss={() => {
+                this.setState({ alert: false });
+              }}
+              header="Mot de passe oublié"
+              message="Merci de contacter l'administrateur du site, son mail vient d'être copié dans votre presse-papier."
+              buttons={[
+                {
+                  text: "OK",
+                  handler: () => {
+                    this.setState({ alert: false });
+                  },
+                },
+              ]}
+            />
+            <br />
             <IonButton
               onClick={() => {
                 this.checkForm();
@@ -119,7 +163,7 @@ class LogInModal extends React.Component<LogInModalProps, IState> {
         </IonModal>
         <style>
           {`
-            
+
           `}
         </style>
       </>
