@@ -16,19 +16,19 @@ import {
   IonToolbar,
 } from "@ionic/react";
 import { Link } from "react-router-dom";
-import { Option } from "../models/itemOption";
-import { Value } from "../models/itemOptionValue";
+import { Option } from "../../models/itemOption";
+import { Value } from "../../models/itemOptionValue";
 
-interface BasketProps {
+interface CustomerBasketProps {
   state: any;
   dispatch: any;
 }
 
-interface Basket {
-  restaurant_id: string;
-  restaurant_name: string;
-  items: [BasketItem];
-}
+// interface Basket {
+//   restaurant_id: string;
+//   restaurant_name: string;
+//   items: [BasketItem];
+// }
 
 interface BasketItem {
   id: any;
@@ -39,7 +39,7 @@ interface BasketItem {
   options: Array<Option>;
 }
 
-class Basket extends React.Component<BasketProps> {
+class CustomerBasket extends React.Component<CustomerBasketProps> {
   changeItemQuantity = (item: BasketItem, quantity: number) => {
     const { dispatch } = this.props;
     if (quantity > 0 && quantity <= 10) {
@@ -294,4 +294,4 @@ class Basket extends React.Component<BasketProps> {
   }
 }
 
-export default Basket;
+export default CustomerBasket;

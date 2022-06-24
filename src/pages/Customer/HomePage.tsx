@@ -7,16 +7,29 @@ import {
   IonToolbar,
 } from "@ionic/react";
 
-import RestaurantList from "../components/HomePage/RestaurantList";
-import AddressDisplay from "../components/HomePage/AddressDisplay";
-import AddressModal from "../components/HomePage/AddressPicker";
+import RestaurantList from "../../components/Customer/HomePage/RestaurantList";
+import AddressDisplay from "../../components/Customer/HomePage/AddressDisplay";
+import AddressModal from "../../components/Customer/HomePage/AddressPicker";
 
-interface HomePageProps {
+interface CustomerHomePageProps {
   state: any;
   dispatch: any;
 }
 
-class HomePage extends React.Component<HomePageProps> {
+class CustomerHomePage extends React.Component<CustomerHomePageProps> {
+  homePageContent = () => {
+    switch (this.props.state.userInfo.typeUser) {
+      case "customer":
+        return <></>;
+      case "restaurant":
+        return <></>;
+      case "deliverer":
+        return <></>;
+      case "admin":
+        return <></>;
+    }
+  };
+
   render() {
     return (
       <>
@@ -60,4 +73,4 @@ class HomePage extends React.Component<HomePageProps> {
   }
 }
 
-export default HomePage;
+export default CustomerHomePage;

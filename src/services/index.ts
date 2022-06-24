@@ -1,11 +1,11 @@
-const apiUrl = "https://virtserver.swaggerhub.com/Arthur-Coppey/uber-cesi/1.0.0/";
+const apiUrl = "https://ubercesi.sleepycat.date/";
 
 function buildUrl(url: string) {
     return apiUrl + url;
 }
 
 export function GET(url: string) {
-    return fetch(buildUrl(url))
+    return fetch(buildUrl(url), { credentials: "same-origin" })
         .then(response => response.json())
         .catch(error => console.error(error));
 };
@@ -16,7 +16,7 @@ export function POST(url: string, data: any) {
         headers: {
             "Content-Type": "application/json"
         },
-        body: JSON.stringify(data)
+        body: JSON.stringify(data), credentials: "same-origin"
     })
         .then(response => response.json())
         .catch(error => console.error(error));
@@ -28,7 +28,7 @@ export function PUT(url: string, data: any) {
         headers: {
             "Content-Type": "application/json"
         },
-        body: JSON.stringify(data)
+        body: JSON.stringify(data), credentials: "same-origin"
     })
         .then(response => response.json())
         .catch(error => console.error(error));
@@ -36,7 +36,7 @@ export function PUT(url: string, data: any) {
 
 export function DELETE(url: string) {
     return fetch(buildUrl(url), {
-        method: "DELETE"
+        method: "DELETE", credentials: "same-origin"
     })
         .then(response => response.json())
         .catch(error => console.error(error));

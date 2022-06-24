@@ -1,10 +1,9 @@
 import React from "react";
 import { IonItem, IonList, IonText } from "@ionic/react";
 import OrderList from "./Orders";
-import PaymentsInformation from "./PaymentsInformation";
 import Profile from "./Profile";
 import Sponsor from "./Sponsor";
-import About from "./About";
+import About from "../../Common/About";
 
 interface SettingsListProps {
   state: any;
@@ -35,13 +34,6 @@ class SettingsList extends React.Component<SettingsListProps> {
           </IonItem>
           <IonItem
             onClick={() => {
-              this.openModal("paymentsInformation");
-            }}
-          >
-            <IonText>Mes moyens de paiement</IonText>
-          </IonItem>
-          <IonItem
-            onClick={() => {
               this.openModal("profile");
             }}
           >
@@ -63,10 +55,6 @@ class SettingsList extends React.Component<SettingsListProps> {
           </IonItem>
         </IonList>
         <OrderList state={this.props.state} dispatch={this.props.dispatch} />
-        <PaymentsInformation
-          state={this.props.state}
-          dispatch={this.props.dispatch}
-        />
         <Profile state={this.props.state} dispatch={this.props.dispatch} />
         <Sponsor state={this.props.state} dispatch={this.props.dispatch} />
         <About state={this.props.state} dispatch={this.props.dispatch} />

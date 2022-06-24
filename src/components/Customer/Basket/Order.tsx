@@ -10,8 +10,8 @@ import {
 import { PayPalButtons } from "@paypal/react-paypal-js";
 import React from "react";
 import { Link } from "react-router-dom";
-import { Option } from "../../models/itemOption";
-import { Value } from "../../models/itemOptionValue";
+import { Option } from "../../../models/itemOption";
+import { Value } from "../../../models/itemOptionValue";
 
 interface BasketItem {
   id?: any;

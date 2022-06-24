@@ -9,15 +9,15 @@ import {
   IonTitle,
   IonToolbar,
 } from "@ionic/react";
-import SettingsList from "../components/Account/SettingsList";
+import SettingsList from "../../components/Customer/Account/SettingsList";
 import { personCircleOutline } from "ionicons/icons";
 
-interface AccountProps {
+interface CustomerAccountProps {
   state: any;
   dispatch: any;
 }
 
-class Account extends React.Component<AccountProps> {
+class CustomerAccount extends React.Component<CustomerAccountProps> {
   render() {
     return (
       <>
@@ -60,7 +60,10 @@ class Account extends React.Component<AccountProps> {
                 className="order-chip"
                 outline
                 onClick={() =>
-                  this.props.dispatch({ type: "CHANGE_USER_AUTH" })
+                  this.props.dispatch({
+                    type: "CHANGE_USER_AUTH",
+                    payload: false,
+                  })
                 }
               >
                 <IonText>
@@ -97,4 +100,4 @@ class Account extends React.Component<AccountProps> {
   }
 }
 
-export default Account;
+export default CustomerAccount;

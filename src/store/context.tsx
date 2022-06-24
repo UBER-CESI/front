@@ -14,10 +14,14 @@ const defaultState = {
   addressModal: false,
   address: "264 Bd Godard, 33300 Bordeaux",
   basket: basketJSON,
+  userInfo: {},
+  typeUser: "",
+  customerInfo: {},
+  restaurantInfo: {},
+  delivererInfo: {},
   userInfos: userJSON,
   accountModals: {
     orders: false,
-    paymentsInformation: false,
     profile: false,
     promotions: false,
     about: false,
@@ -45,6 +49,11 @@ export type ActionType =
   | "SET_ADDRESS"
   | "SET_BASKET"
   | "CHANGE_ADDRESS_MODAL"
+  | "CHANGE_USER_INFO"
+  | "CHANGE_TYPE_USER"
+  | "CHANGE_CUSTOMER_INFO"
+  | "CHANGE_RESTAURANT_INFO"
+  | "CHANGE_DELIVERER_INFO"
   | "CHANGE_USER_INFOS"
   | "SET_ACCOUNT_MODALS"
   | "SET_ORDERS"
@@ -69,7 +78,7 @@ function moduleReducer(state: StateType, action: ActionWithParamsType) {
   console.log("action is", action);
   switch (action.type) {
     case "CHANGE_USER_AUTH":
-      return { ...state, userAuth: !state.userAuth };
+      return { ...state, userAuth: action.payload };
     case "SET_RESTAURANTS":
       return { ...state, restaurants: action.payload };
     case "CHANGE_LOGIN_MODAL":
@@ -82,6 +91,16 @@ function moduleReducer(state: StateType, action: ActionWithParamsType) {
       return { ...state, basket: action.payload };
     case "CHANGE_ADDRESS_MODAL":
       return { ...state, addressModal: !state.addressModal };
+    case "CHANGE_USER_INFO":
+      return { ...state, userInfo: action.payload };
+    case "CHANGE_TYPE_USER":
+      return { ...state, typeUser: action.payload };
+    case "CHANGE_CUSTOMER_INFO":
+      return { ...state, customerInfo: action.payload };
+    case "CHANGE_RESTAURANT_INFO":
+      return { ...state, restaurantInfo: action.payload };
+    case "CHANGE_DELIVERER_INFO":
+      return { ...state, delivererInfo: action.payload };
     case "CHANGE_USER_INFOS":
       return { ...state, userInfos: action.payload };
     case "SET_ACCOUNT_MODALS":

@@ -1,8 +1,8 @@
 import React from "react";
 import { IonButton, IonContent, IonPage } from "@ionic/react";
 
-import LoginModal from "./User/LogIn";
-import RegisterModal from "./User/Register";
+import LoginModal from "./LogIn";
+import RegisterModal from "./Register";
 
 interface WelcomePageProps {
   state: any;

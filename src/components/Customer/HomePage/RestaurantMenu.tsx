@@ -22,13 +22,13 @@ import {
   IonToolbar,
 } from "@ionic/react";
 import React from "react";
-import { Restaurant } from "../../models/restaurant";
-import { Item } from "../../models/item";
-import { Option } from "../../models/itemOption";
-import { Value } from "../../models/itemOptionValue";
+import { Restaurant } from "../../../models/restaurant";
+import { Item } from "../../../models/item";
+import { Option } from "../../../models/itemOption";
+import { Value } from "../../../models/itemOptionValue";
 import { add, checkmarkDoneOutline, closeOutline } from "ionicons/icons";
 
-interface RestaurantMenuProps {
+interface CustomerRestaurantMenuProps {
   state: any;
   dispatch: any;
 }
@@ -40,8 +40,11 @@ interface IState {
   toastError: boolean;
 }
 
-class RestaurantMenu extends React.Component<RestaurantMenuProps, IState> {
-  constructor(props: RestaurantMenuProps) {
+class CustomerRestaurantMenu extends React.Component<
+  CustomerRestaurantMenuProps,
+  IState
+> {
+  constructor(props: CustomerRestaurantMenuProps) {
     super(props);
     this.state = {
       menu: [],
@@ -350,4 +353,4 @@ class RestaurantMenu extends React.Component<RestaurantMenuProps, IState> {
   }
 }
 
-export default RestaurantMenu;
+export default CustomerRestaurantMenu;

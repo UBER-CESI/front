@@ -1,51 +1,58 @@
 import React from "react";
 import {
-  IonAlert,
   IonButton,
   IonContent,
   IonInput,
   IonLabel,
   IonModal,
-  IonText,
   IonTitle,
   IonToast,
   IonToolbar,
 } from "@ionic/react";
-import { Clipboard } from "@capacitor/clipboard";
 
-interface LogInModalProps {
+interface RegisterModalProps {
   state: any;
   dispatch: any;
 }
 
 interface IState {
+  firstName: string;
+  lastName: string;
   email: string;
   password: string;
+  passwordConfirmation: string;
   toast: boolean;
   toastIsSuccess: boolean;
-  alert: boolean;
 }
 
-class LogInModal extends React.Component<LogInModalProps, IState> {
-  constructor(props: LogInModalProps) {
+class RegisterModal extends React.Component<RegisterModalProps, IState> {
+  constructor(props: RegisterModalProps) {
     super(props);
     this.state = {
+      firstName: "",
+      lastName: "",
       email: "",
       password: "",
+      passwordConfirmation: "",
       toast: false,
       toastIsSuccess: false,
-      alert: false,
     };
   }
 
   checkForm = () => {
     var validRegex =
       /^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*$/;
-    if (this.state.email.match(validRegex) && this.state.password.length > 9) {
+    if (
+      this.state.email.match(validRegex) &&
+      this.state.password.length > 9 &&
+      this.state.password === this.state.passwordConfirmation &&
+      this.state.firstName.length > 0 &&
+      this.state.lastName.length > 0
+    ) {
       this.setState({ toast: true, toastIsSuccess: true });
       setTimeout(() => {
         this.closeModal();
-        this.props.dispatch({ type: "CHANGE_USER_AUTH" });
+        this.props.dispatch({ type: "CHANGE_USER_AUTH", payload: true });
       }, 1000);
     } else {
       this.setState({ toast: true, toastIsSuccess: false });
@@ -54,7 +61,7 @@ class LogInModal extends React.Component<LogInModalProps, IState> {
 
   closeModal = () => {
     this.props.dispatch({
-      type: "CHANGE_LOGIN_MODAL",
+      type: "CHANGE_REGISTER_MODAL",
     });
     this.setState({
       email: "",
@@ -62,24 +69,13 @@ class LogInModal extends React.Component<LogInModalProps, IState> {
     });
   };
 
-  forgottenEmail = async () => {
-    await Clipboard.write({
-      string: "admin@cesi-eats.fr",
-    })
-      .then(() => {
-        this.setState({ alert: true });
-      })
-      .catch(() => {
-        navigator.clipboard.writeText("admin@cesi-eats.fr").then(() => {
-          this.setState({ alert: true });
-        });
-      });
-  };
-
   render() {
     return (
       <>
-        <IonModal className="login-modal" isOpen={this.props.state.loginModal}>
+        <IonModal
+          className="register-modal"
+          isOpen={this.props.state.registerModal}
+        >
           <IonToolbar>
             <IonTitle className="page-header">
               <IonButton
@@ -91,7 +87,7 @@ class LogInModal extends React.Component<LogInModalProps, IState> {
               >
                 X
               </IonButton>
-              Connexion
+              Inscription
             </IonTitle>
           </IonToolbar>
           <IonContent>
@@ -102,11 +98,27 @@ class LogInModal extends React.Component<LogInModalProps, IState> {
               }}
               message={
                 this.state.toastIsSuccess
-                  ? "Connexion réussie"
-                  : "Email ou mot de passe incorrect"
+                  ? "Incrption réussie"
+                  : "Veuillez remplir tous les champs et renseigner un email et un mot de passe valides"
               }
               color={this.state.toastIsSuccess ? "success" : "danger"}
               duration={2000}
+            />
+            <IonLabel>Prénom</IonLabel>
+            <IonInput
+              placeholder="Prénom"
+              value={this.state.firstName}
+              onIonChange={(e) => {
+                this.setState({ firstName: e.detail.value! });
+              }}
+            />
+            <IonLabel>Nom de famille</IonLabel>
+            <IonInput
+              placeholder="Nom de famille"
+              value={this.state.lastName}
+              onIonChange={(e) => {
+                this.setState({ lastName: e.detail.value! });
+              }}
             />
             <IonLabel>Email</IonLabel>
             <IonInput
@@ -126,44 +138,28 @@ class LogInModal extends React.Component<LogInModalProps, IState> {
                 this.setState({ password: e.detail.value! });
               }}
             />
-            <br />
-            <IonText
-              onClick={() => this.forgottenEmail()}
-              color={"primary"}
-              className="forgotten-password"
-            >
-              Mot de passe oublié ?
-            </IonText>
-            <IonAlert
-              isOpen={this.state.alert}
-              onDidDismiss={() => {
-                this.setState({ alert: false });
+            <IonLabel>Confirmation du mot de passe</IonLabel>
+            <IonInput
+              type="password"
+              placeholder="Confirmation du mot de passe"
+              value={this.state.passwordConfirmation}
+              onIonChange={(e) => {
+                this.setState({ passwordConfirmation: e.detail.value! });
               }}
-              header="Mot de passe oublié"
-              message="Merci de contacter l'administrateur du site, son mail vient d'être copié dans votre presse-papier."
-              buttons={[
-                {
-                  text: "OK",
-                  handler: () => {
-                    this.setState({ alert: false });
-                  },
-                },
-              ]}
             />
-            <br />
             <IonButton
               onClick={() => {
                 this.checkForm();
               }}
               className="register-login-confirmation"
             >
-              Connexion
+              Inscrption
             </IonButton>
           </IonContent>
         </IonModal>
         <style>
           {`
-
+            
           `}
         </style>
       </>
@@ -171,4 +167,4 @@ class LogInModal extends React.Component<LogInModalProps, IState> {
   }
 }
 
-export default LogInModal;
+export default RegisterModal;

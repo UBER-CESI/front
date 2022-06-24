@@ -13,10 +13,10 @@ import {
   IonToolbar,
 } from "@ionic/react";
 
-import { Order } from "../../models/order";
-import { Item } from "../../models/item";
-import { Option } from "../../models/itemOption";
-import { Value } from "../../models/itemOptionValue";
+import { Order } from "../../../models/order";
+import { Item } from "../../../models/item";
+import { Option } from "../../../models/itemOption";
+import { Value } from "../../../models/itemOptionValue";
 
 interface OrdersProps {
   state: any;
@@ -62,7 +62,6 @@ class Orders extends React.Component<OrdersProps> {
   };
 
   render() {
-    console.log(this.props.state.orders);
     return (
       <>
         <IonModal
