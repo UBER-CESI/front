@@ -6,7 +6,7 @@ import { POST, GET, PUT, DELETE } from "./index";
 const restaurantUrl: string = "restaurant/";
 
 export function getRestaurantList() {
-    return GET("restaurant");
+    return GET("restaurant/");
 };
 
 export function createRestaurant(restaurant: Restaurant) {

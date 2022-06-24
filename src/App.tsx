@@ -55,6 +55,7 @@ import { useModule } from "./store/context";
 import { login } from "./services/loginRegister";
 import { loginType } from "./models/loginRegister";
 import { getRestaurantList } from "./services/restaurant";
+import { getCookies } from "./services/index";
 
 setupIonicReact();
 
@@ -67,6 +68,9 @@ const App: React.FC = () => {
       email: "r@r.com",
       password: "password",
     };
+    getCookies(userLogin)
+      .then((res: any) => console.log(res))
+      .catch((err: any) => console.log(err));
     login(userLogin)
       .then((res) => {
         dispatch({
