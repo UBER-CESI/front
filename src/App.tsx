@@ -55,9 +55,9 @@ import { useModule } from "./store/context";
 import { login } from "./services/loginRegister";
 import { loginType } from "./models/loginRegister";
 import { getRestaurantList } from "./services/restaurant";
-
+import {setupNotifications} from "./services/notifications"
 setupIonicReact();
-
+setupNotifications()
 const App: React.FC = () => {
   const { state, dispatch } = useModule();
   const [loadingScreen, setLoadingScreen] = React.useState(true);
