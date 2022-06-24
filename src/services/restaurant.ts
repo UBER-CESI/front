@@ -1,41 +1,12 @@
+import { Item } from "../models/item";
+import { Menu } from "../models/menu";
+import { Restaurant } from "../models/restaurant";
 import { POST, GET, PUT, DELETE } from "./index";
 
 const restaurantUrl: string = "restaurant/";
 
-interface Restaurant {
-    name: string;
-    address: string;
-    phoneNumber: string;
-    email: string;
-};
-
-interface Menu {
-    name: string;
-    description: string;
-    items: Array<string>;
-    price: number;
-    restaurantId: string;
-};
-
-export interface Item {
-    name: string;
-    description: string;
-    allergens: Array<string>;
-    options: Array<Option>;
-    price: number;
-    restaurantId: string;
-};
-
-interface Option {
-    name: string;
-    multiple: boolean;
-    required: boolean;
-    values: Array<Value>;
-};
-
-interface Value {
-    value: string;
-    priceOffset: number;
+export function getRestaurantList() {
+    return GET("restaurant");
 };
 
 export function createRestaurant(restaurant: Restaurant) {

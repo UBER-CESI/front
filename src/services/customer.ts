@@ -1,14 +1,7 @@
+import { Customer } from "../models/customer";
 import { POST, GET, PUT, DELETE } from "./index";
 
 const customerUrl: string = "customer/";
-
-interface Customer {
-    email: string;
-    nickname: string;
-    firstname: string;
-    lastname: string;
-    phoneNumber: string;
-};
 
 export function createCustomer(customer: Customer) {
     return PUT(customerUrl + "register", customer);

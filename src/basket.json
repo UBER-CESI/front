@@ -1,53 +1,70 @@
 {
-    "restaurant_id": "1",
-    "restaurant_name": "Pizza Hut",
-    "items": [
+  "restaurant_id": 1,
+  "restaurant_name": "Pizza Hut",
+  "items": [
+    {
+      "id": 0,
+      "name": "Tacos",
+      "description": "Tacos 2 viandes",
+      "allergens": [
+        "lait",
+        "amandes"
+      ],
+      "options": [
         {
-            "id": 1,
-            "name": "Product 1",
-            "image": "https://via.placeholder.com/150",
-            "price": 10,
-            "quantity": 1
+          "name": "Sauce",
+          "multiple": true,
+          "required": true,
+          "values": [
+            {
+              "value": "Ketchup",
+              "priceOffset": 0
+            },
+            {
+              "value": "Mayonnaise",
+              "priceOffset": 0
+            }
+          ]
         },
         {
-            "id": 2,
-            "name": "Product 2",
-            "option": [
-                "Ketchup",
-                "Extra Cheese",
-                "Fanta"
-            ],
-            "img": "https://via.placeholder.com/150",
-            "price": 20,
-            "quantity": 2
-        },
-        {
-            "id": 3,
-            "name": "Product 3",
-            "option": [
-                "Extra Peperonni"
-            ],
-            "img": "https://via.placeholder.com/150",
-            "price": 6.9,
-            "quantity": 2
-        },
-        {
-            "id": 4,
-            "name": "Product 4",
-            "img": "https://via.placeholder.com/150",
-            "price": 20,
-            "quantity": 2
-        },
-        {
-            "id": 5,
-            "name": "Product 5",
-            "option": [
-                "Ketchup",
-                "Orangina"
-            ],
-            "img": "https://via.placeholder.com/150",
-            "price": 4.20,
-            "quantity": 2
+          "name": "Supplément viande",
+          "multiple": true,
+          "required": false,
+          "values": [
+            {
+              "value": "Cordon bleu",
+              "priceOffset": 2
+            }
+          ]
         }
-    ]
+      ],
+      "price": 12,
+      "quantity": 1,
+      "restaurantId": 0
+    },
+    {
+      "id": 1,
+      "name": "Pizza",
+      "description": "Bonne grosse pizza",
+      "allergens": [
+        "fromage"
+      ],
+      "options": [
+        {
+          "name": "Sauce",
+          "multiple": true,
+          "required": true,
+          "values": [
+            {
+              "value": "ketchup",
+              "priceOffset": 0
+            }
+          ]
+        }
+      ],
+      "price": 8,
+      "quantity": 1,
+      "restaurantId": 0
+    }
+  ]
 }

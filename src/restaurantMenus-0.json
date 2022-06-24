@@ -1,0 +1,62 @@
+[
+    {
+        "name": "Tacos",
+        "description": "Bon gros Tacos",
+        "allergens": [
+            "lait",
+            "amandes"
+        ],
+        "options": [
+            {
+                "name": "Sauce",
+                "multiple": true,
+                "required": true,
+                "values": [
+                    {
+                        "value": "Ketchup",
+                        "priceOffset": 0
+                    },
+                    {
+                        "value": "Mayonnaise",
+                        "priceOffset": 0
+                    }
+                ]
+            },
+            {
+                "name": "Supplément viande",
+                "multiple": true,
+                "required": false,
+                "values": [
+                    {
+                        "value": "Cordon bleu",
+                        "priceOffset": 2
+                    }
+                ]
+            }
+        ],
+        "price": 12,
+        "restaurantId": 0
+    },
+    {
+        "name": "Pizza",
+        "description": "Bonne grosse pizza",
+        "allergens": [
+            "fromage"
+        ],
+        "options": [
+            {
+                "name": "Sauce",
+                "multiple": true,
+                "required": true,
+                "values": [
+                    {
+                        "value": "ketchup",
+                        "priceOffset": 0
+                    }
+                ]
+            }
+        ],
+        "price": 8,
+        "restaurantId": 0
+    }
+]

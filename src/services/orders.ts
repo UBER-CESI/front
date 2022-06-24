@@ -1,17 +1,8 @@
+import { Order } from "../models/order";
 import { POST, GET, PUT, DELETE } from "./index";
-import { Item } from "./restaurant";
 
 const orderUrl: string = "order";
 const orderSlashUrl: string = "order/";
-
-interface Order {
-    customerId: string;
-    delivererId: string;
-    restaurantId: string;
-    totalPrice: number;
-    tipAmount: number;
-    items: Array<Item>;
-};
 
 export function getOrderList() {
     return GET(orderUrl);
