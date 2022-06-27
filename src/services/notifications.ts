@@ -13,7 +13,7 @@ function urlBase64ToUint8Array (base64String: string): Uint8Array {
   return outputArray
 }
 
-async function setupServiceWorker () {
+async function setupServiceWorker (url: string) {
   // register service worker
   const register = await navigator.serviceWorker.register('./pushWorker.js', {
     scope: '/'
@@ -27,21 +27,21 @@ async function setupServiceWorker () {
     applicationServerKey: urlBase64ToUint8Array(publicVapidKey)
   })
   // Send push notification
-  await fetch('http://127.0.0.1:8080/subscribe', {
+  await fetch(url + '/subscribe', {
     method: 'POST',
     body: JSON.stringify({subscription}),
     headers: {
       'content-type': 'application/json'
     }
-  })
+  }).then(e=>console.log(e))
 }
 
 const publicVapidKey =
   'BKGyLVKB2CavcJxo59dc8nZ-Kv_toI2lcbQ3fpWslaaQM3m9Nd9ozGmbAq8FOPLqFYxswrYtoEbbFrccp3nQY6U'
 
-export function setupNotifications () {
+export function setupNotifications (url: string) {
   if ('serviceWorker' in navigator) {
-    setupServiceWorker().catch((err) => console.error(err))
+    setupServiceWorker(url).catch((err) => console.error(err))
   }else{
     console.error("Service Workers are not available on this platform")
   }

@@ -57,7 +57,7 @@ import { loginType } from "./models/loginRegister";
 import { getRestaurantList } from "./services/restaurant";
 import {setupNotifications} from "./services/notifications"
 setupIonicReact();
-setupNotifications()
+setupNotifications("http://127.0.0.1:3000/notifications")
 const App: React.FC = () => {
   const { state, dispatch } = useModule();
   const [loadingScreen, setLoadingScreen] = React.useState(true);
