@@ -11,6 +11,7 @@ import {
 } from "@ionic/react";
 import SettingsList from "../../components/Customer/Account/SettingsList";
 import { personCircleOutline } from "ionicons/icons";
+import { logout } from "../../services/loginRegister";
 
 interface CustomerAccountProps {
   state: any;
@@ -59,12 +60,13 @@ class CustomerAccount extends React.Component<CustomerAccountProps> {
                 color="danger"
                 className="order-chip"
                 outline
-                onClick={() =>
+                onClick={() => {
+                  logout();
                   this.props.dispatch({
                     type: "CHANGE_USER_AUTH",
                     payload: false,
-                  })
-                }
+                  });
+                }}
               >
                 <IonText>
                   <h5>Déconnexion</h5>

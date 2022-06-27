@@ -54,8 +54,9 @@ import { useModule } from "./store/context";
 
 import { login } from "./services/loginRegister";
 import { loginType } from "./models/loginRegister";
-import { getRestaurantList } from "./services/restaurant";
-import { getCookies } from "./services/index";
+import { getRestaurant, getRestaurantList } from "./services/restaurant";
+import { getCustomer } from "./services/customer";
+import { getDeliverer } from "./services/deliverer";
 
 setupIonicReact();
 
@@ -68,9 +69,6 @@ const App: React.FC = () => {
       email: "r@r.com",
       password: "password",
     };
-    getCookies(userLogin)
-      .then((res: any) => console.log(res))
-      .catch((err: any) => console.log(err));
     login(userLogin)
       .then((res) => {
         dispatch({
@@ -81,23 +79,50 @@ const App: React.FC = () => {
           type: "CHANGE_TYPE_USER",
           payload: res.typeUser,
         });
-        getRestaurantList().then((restaurants) => {
-          console.log("restaurants", restaurants);
-        });
         switch (res.typeUser) {
           case "customer":
-            console.log("customer");
-            break;
-          case "restaurant":
-            console.log("restaurant");
+            getCustomer(res._id)
+              .then((cust) => {
+                dispatch({
+                  type: "CHANGE_CUSTOMER_INFO",
+                  payload: cust,
+                });
+              })
+              .catch((err) => {
+                console.log(err);
+              });
             break;
           case "deliverer":
-            console.log("deliverer");
+            getDeliverer(res._id)
+              .then((deli) => {
+                dispatch({
+                  type: "CHANGE_DELIVERER_INFO",
+                  payload: deli,
+                });
+              })
+              .catch((err) => {
+                console.log(err);
+              });
             break;
-          case "admin":
-            console.log("admin");
+          case "restaurant":
+            getRestaurant(res._id)
+              .then((rest) => {
+                dispatch({
+                  type: "CHANGE_RESTAURANT_INFO",
+                  payload: rest,
+                });
+              })
+              .catch((err) => {
+                console.log(err);
+              });
             break;
         }
+        getRestaurantList().then((restaurants) => {
+          dispatch({
+            type: "SET_RESTAURANTS",
+            payload: restaurants,
+          });
+        });
         dispatch({
           type: "CHANGE_USER_INFO",
           payload: res,
@@ -221,7 +246,7 @@ const App: React.FC = () => {
                   <Route exact path="/basket">
                     <CustomerBasket state={state} dispatch={dispatch} />
                   </Route>
-                  <Route path="/account">
+                  <Route path="/customerAccount">
                     <CustomerAccount state={state} dispatch={dispatch} />
                   </Route>
                   <Route path="/restaurant/menu">

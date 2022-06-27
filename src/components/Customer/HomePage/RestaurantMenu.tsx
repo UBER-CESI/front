@@ -27,6 +27,7 @@ import { Item } from "../../../models/item";
 import { Option } from "../../../models/itemOption";
 import { Value } from "../../../models/itemOptionValue";
 import { add, checkmarkDoneOutline, closeOutline } from "ionicons/icons";
+import { getRestaurantMenuList } from "../../../services/restaurant";
 
 interface CustomerRestaurantMenuProps {
   state: any;
@@ -55,7 +56,12 @@ class CustomerRestaurantMenu extends React.Component<
   }
 
   componentDidMount = () => {
-    this.setState({ menu: this.findMenu() });
+    getRestaurantMenuList(this.props.state.selectedRestaurantId).then(
+      (menu) => {
+        console.log("menu is", menu);
+        this.setState({ menu: menu });
+      }
+    );
     setTimeout(() => {
       this.addCheckboxes();
     }, 0);
@@ -166,17 +172,10 @@ class CustomerRestaurantMenu extends React.Component<
     return price;
   };
 
-  findMenu = (): Array<Item> => {
-    let menu = require("../../restaurantMenus-" +
-      this.props.state.selectedRestaurantId +
-      ".json");
-    return menu;
-  };
-
   restaurantName = () => {
     const { state } = this.props;
     const restaurant = state.restaurants.find(
-      (r: Restaurant) => r.id === state.selectedRestaurantId
+      (r: Restaurant) => r._id === state.selectedRestaurantId
     );
     return restaurant.name;
   };

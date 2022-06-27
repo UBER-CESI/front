@@ -227,7 +227,13 @@ class CustomerBasket extends React.Component<CustomerBasketProps> {
                   )}
                 </IonList>
                 <IonText>
-                  <h2>Total : {this.calculateTotal()}€</h2>
+                  <h2>Commande : {this.calculateTotal()}€</h2>
+                </IonText>
+                <IonText>
+                  <h2>Frais de livraison : 2€</h2>
+                </IonText>
+                <IonText>
+                  <h2>Total : {this.calculateTotal() + 2}€</h2>
                 </IonText>
                 <IonChip color="primary" className="order-chip" outline>
                   <IonText>

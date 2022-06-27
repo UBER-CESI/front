@@ -89,7 +89,8 @@
     "@types/google-map-react": "^2.1.7",
     "@types/react-places-autocomplete": "^7.2.9",
     "@types/tough-cookie": "^4.0.2",
-    "axios-cookiejar-support": "^4.0.2"
+    "axios-cookiejar-support": "^4.0.2",
+    "fs": "^0.0.1-security"
   },
   "description": "An Ionic project"
 }
