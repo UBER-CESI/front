@@ -52,13 +52,16 @@ import "./theme/global.css";
 
 import { useModule } from "./store/context";
 
-import { login } from "./services/loginRegister";
+import { login } from "./services/index";
 import { loginType } from "./models/loginRegister";
 import { getRestaurant, getRestaurantList } from "./services/restaurant";
 import { getCustomer } from "./services/customer";
 import { getDeliverer } from "./services/deliverer";
+import { setupNotifications } from "./services/notifications";
+import { buildUrl } from "./services";
 
 setupIonicReact();
+setupNotifications(buildUrl("notifications"));
 
 const App: React.FC = () => {
   const { state, dispatch } = useModule();
@@ -66,7 +69,7 @@ const App: React.FC = () => {
 
   useEffect(() => {
     let userLogin: loginType = {
-      email: "r@r.com",
+      email: "c@c.com",
       password: "password",
     };
     login(userLogin)
@@ -77,15 +80,15 @@ const App: React.FC = () => {
         });
         dispatch({
           type: "CHANGE_TYPE_USER",
-          payload: res.typeUser,
+          payload: res.data.typeUser,
         });
-        switch (res.typeUser) {
+        switch (res.data.typeUser) {
           case "customer":
-            getCustomer(res._id)
-              .then((cust) => {
+            getCustomer(res.data._id)
+              .then((cust: any) => {
                 dispatch({
                   type: "CHANGE_CUSTOMER_INFO",
-                  payload: cust,
+                  payload: cust.data,
                 });
               })
               .catch((err) => {
@@ -93,11 +96,11 @@ const App: React.FC = () => {
               });
             break;
           case "deliverer":
-            getDeliverer(res._id)
-              .then((deli) => {
+            getDeliverer(res.data._id)
+              .then((deli: any) => {
                 dispatch({
                   type: "CHANGE_DELIVERER_INFO",
-                  payload: deli,
+                  payload: deli.data,
                 });
               })
               .catch((err) => {
@@ -105,11 +108,11 @@ const App: React.FC = () => {
               });
             break;
           case "restaurant":
-            getRestaurant(res._id)
-              .then((rest) => {
+            getRestaurant(res.data._id)
+              .then((rest: any) => {
                 dispatch({
                   type: "CHANGE_RESTAURANT_INFO",
-                  payload: rest,
+                  payload: rest.data,
                 });
               })
               .catch((err) => {
@@ -117,15 +120,17 @@ const App: React.FC = () => {
               });
             break;
         }
-        getRestaurantList().then((restaurants) => {
-          dispatch({
-            type: "SET_RESTAURANTS",
-            payload: restaurants,
-          });
-        });
+        getRestaurantList()
+          .then((restaurants: any) => {
+            dispatch({
+              type: "SET_RESTAURANTS",
+              payload: restaurants.data,
+            });
+          })
+          .catch((e) => console.log(e));
         dispatch({
           type: "CHANGE_USER_INFO",
-          payload: res,
+          payload: res.data,
         });
       })
       .catch((err) => {

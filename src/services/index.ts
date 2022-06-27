@@ -1,71 +1,53 @@
 import axios from 'axios';
-import TC from "tough-cookie";
 
 const apiUrl = "https://ubercesi.sleepycat.date/";
 
-function buildUrl(url: string) {
+export function buildUrl(url: string) {
     return apiUrl + url;
 };
 
-/*const jar = new TC.CookieJar();
-var connect_sid: string = "";
+//const jar = new TC.CookieJar();
 const instance = axios.create({
     withCredentials: true,
 });
 
-const login = {
-    method: "POST",
-    url: buildUrl("login"),
-    headers: {
-        "Content-Type": "application/json",
-        'Access-Control-Allow-Origin': '*'
-    },
-    data: { email: "c@c.com", password: "password" },
-};
-
-function buildconf(Url: string) {
+function buildconf(Url: string, Method: string, Body?: any) {
     return {
-        method: "GET",
-        url: Url,
+        method: Method,
+        url: buildUrl(Url),
         headers: {
             "Content-Type": "application/json",
-            Cookie: connect_sid + ";"
         },
+        data: Body
 
     };
 };
 
-var truc = fonc()
-async function fonc() {
-    connect_sid = await tryLog();
-    var test = await functiontest();
-};
+export async function login(user: any) {
+    return await instance(
+        buildconf(
+            "login",
+            "POST",
+            // '{ email: ' + user.email + ', password: ' + user.password + ' }'
+            user
+        ))
+}
 
-function functiontest() {
-    return instance(buildconf(buildUrl("customer"))).then((response) => {
-        console.log(response);
-    }).catch((e) => {
-        console.log(e);
-    });
-};
+async function logout() {
+    return await POST("logout")
+}
 
-function tryLog(): Promise<string> {
-    return instance(login).then((response) => {
-        var ret = response.headers["set-cookie"]?.[0].split(";")[0];
-        return ret;
-    }).catch((e) => {
-        return e;
-    });
-};*/
-
-export function GET(url: string) {
+export function GET(url: string) {/*
     return fetch(buildUrl(url), { credentials: "same-origin" })
         .then(response => response.json())
+        .catch(error => console.error(error));*/
+    return instance(buildconf(url, "GET"))
+        .then(((response) => response))
         .catch(error => console.error(error));
 };
 
 export function POST(url: string, data?: any) {
-    return fetch(buildUrl(url), {
+    /*return fetch(buildUrl(url), {
         method: "POST",
         headers: {
             "Content-Type": "application/json"
@@ -74,10 +56,13 @@ export function POST(url: string, data?: any) {
         credentials: "same-origin"
     })
         .then(response => response.json())
+        .catch(error => console.error(error));*/
+    return instance(buildconf(url, "POST", JSON.stringify(data)))
+        .then((response => response))
         .catch(error => console.error(error));
 };
 
-export function PUT(url: string, data: any) {
+export function PUT(url: string, data: any) {/*
     return fetch(buildUrl(url), {
         method: "PUT",
         headers: {
@@ -87,14 +72,20 @@ export function PUT(url: string, data: any) {
         credentials: "same-origin"
     })
         .then(response => response.json())
+        .catch(error => console.error(error));*/
+    return instance(buildconf(url, "PUT", JSON.stringify(data)))
+        .then((response => response))
         .catch(error => console.error(error));
 };
 
-export function DELETE(url: string) {
+export function DELETE(url: string) {/*
     return fetch(buildUrl(url), {
         method: "DELETE",
         credentials: "same-origin"
     })
         .then(response => response.json())
+        .catch(error => console.error(error));*/
+    return instance(buildconf(url, "DELETE"))
+        .then((response => response))
         .catch(error => console.error(error));
 };

@@ -27,7 +27,11 @@ import { Item } from "../../../models/item";
 import { Option } from "../../../models/itemOption";
 import { Value } from "../../../models/itemOptionValue";
 import { add, checkmarkDoneOutline, closeOutline } from "ionicons/icons";
-import { getRestaurantMenuList } from "../../../services/restaurant";
+import {
+  getRestaurantItem,
+  getRestaurantMenuList,
+} from "../../../services/restaurant";
+import { Menu } from "../../../models/menu";
 
 interface CustomerRestaurantMenuProps {
   state: any;
@@ -35,7 +39,7 @@ interface CustomerRestaurantMenuProps {
 }
 
 interface IState {
-  menu: Array<Item>;
+  menu: Menu | any;
   itemQuantity: Array<number>;
   showToast: boolean;
   toastError: boolean;
@@ -48,7 +52,7 @@ class CustomerRestaurantMenu extends React.Component<
   constructor(props: CustomerRestaurantMenuProps) {
     super(props);
     this.state = {
-      menu: [],
+      menu: {},
       itemQuantity: [],
       showToast: false,
       toastError: false,
@@ -57,19 +61,28 @@ class CustomerRestaurantMenu extends React.Component<
 
   componentDidMount = () => {
     getRestaurantMenuList(this.props.state.selectedRestaurantId).then(
-      (menu) => {
-        console.log("menu is", menu);
-        this.setState({ menu: menu });
+      (menu: any) => {
+        let items: Array<Item> = [];
+        menu.data.items.forEach((item: any, i: number) => {
+          getRestaurantItem(this.props.state.selectedRestaurantId, item).then(
+            (it: any) => {
+              items.push(it.data);
+              if (i === menu.data.items.length - 1) {
+                let fullMenu: Menu = {
+                  ...menu.data,
+                  items: items,
+                };
+                this.addCheckboxes(fullMenu);
+              }
+            }
+          );
+        });
       }
     );
-    setTimeout(() => {
-      this.addCheckboxes();
-    }, 0);
   };
 
-  addCheckboxes = () => {
-    let menu = [...this.state.menu];
-    menu.forEach((item: Item) => {
+  addCheckboxes = (menu: Menu) => {
+    menu.items.forEach((item: Item) => {
       item.options.forEach((option: Option) => {
         option.values.forEach((value: Value) => {
           value.checked = false;
@@ -81,7 +94,7 @@ class CustomerRestaurantMenu extends React.Component<
   };
 
   addItemQuantity = () => {
-    let itemQuantity = [...this.state.itemQuantity];
+    let itemQuantity: Array<number> = [];
     this.state.menu.forEach((item: Item) => {
       itemQuantity.push(0);
     });
