@@ -1,10 +1,10 @@
 export interface Customer {
-    id: number;
+    _id: string;
     email: string;
     nickname: string;
     firstname: string;
     lastname: string;
     phoneNumber: string;
-    suspendedAt: Date;
-    uid: number;
+    suspendedAt?: Date;
+    userId: number;
 };

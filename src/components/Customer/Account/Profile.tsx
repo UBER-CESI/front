@@ -12,6 +12,7 @@ import {
   IonToast,
   IonToolbar,
 } from "@ionic/react";
+import { updateCustomer } from "../../../services/customer";
 
 interface ProfileProps {
   state: any;
@@ -44,11 +45,11 @@ class Profile extends React.Component<ProfileProps, IState> {
 
   componentDidMount = () => {
     this.setState({
-      email: this.props.state.userInfos.email,
-      nickname: this.props.state.userInfos.nickname,
-      firstname: this.props.state.userInfos.firstname,
-      lastname: this.props.state.userInfos.lastname,
-      phoneNumber: this.props.state.userInfos.phoneNumber,
+      email: this.props.state.customerInfo.email,
+      nickname: this.props.state.customerInfo.nickname,
+      firstname: this.props.state.customerInfo.firstname,
+      lastname: this.props.state.customerInfo.lastname,
+      phoneNumber: this.props.state.customerInfo.phoneNumber,
     });
   };
 
@@ -62,11 +63,11 @@ class Profile extends React.Component<ProfileProps, IState> {
       payload: accountModals,
     });
     this.setState({
-      email: this.props.state.userInfos.email,
-      nickname: this.props.state.userInfos.nickname,
-      firstname: this.props.state.userInfos.firstname,
-      lastname: this.props.state.userInfos.lastname,
-      phoneNumber: this.props.state.userInfos.phoneNumber,
+      email: this.props.state.customerInfo.email,
+      nickname: this.props.state.customerInfo.nickname,
+      firstname: this.props.state.customerInfo.firstname,
+      lastname: this.props.state.customerInfo.lastname,
+      phoneNumber: this.props.state.customerInfo.phoneNumber,
     });
   };
 
@@ -79,30 +80,47 @@ class Profile extends React.Component<ProfileProps, IState> {
       this.state.lastname.length > 0 &&
       this.state.phoneNumber.length === 10
     ) {
-      this.props.dispatch({
-        type: "CHANGE_USER_INFOS",
-        payload: {
-          email: this.state.email,
-          nickname: this.state.nickname,
-          firstname: this.state.firstname,
-          lastname: this.state.lastname,
-          phoneNumber: this.state.phoneNumber,
-        },
-      });
-      this.setState({
-        toast: true,
-        toastIsSuccess: true,
-      });
-      setTimeout(() => {
-        let accountModals = {
-          ...this.props.state.accountModals,
-          profile: false,
-        };
-        this.props.dispatch({
-          type: "SET_ACCOUNT_MODALS",
-          payload: accountModals,
+      let updatedCustomer = {
+        ...this.props.state.customerInfo,
+        email: this.state.email,
+        nickname: this.state.nickname,
+        firstname: this.state.firstname,
+        lastname: this.state.lastname,
+        phoneNumber: this.state.phoneNumber,
+      };
+      updateCustomer(this.props.state.customerInfo._id, updatedCustomer)
+        .then(() => {
+          this.props.dispatch({
+            type: "CHANGE_CUSTOMER_INFO",
+            payload: {
+              email: this.state.email,
+              nickname: this.state.nickname,
+              firstname: this.state.firstname,
+              lastname: this.state.lastname,
+              phoneNumber: this.state.phoneNumber,
+            },
+          });
+          this.setState({
+            toast: true,
+            toastIsSuccess: true,
+          });
+          setTimeout(() => {
+            let accountModals = {
+              ...this.props.state.accountModals,
+              profile: false,
+            };
+            this.props.dispatch({
+              type: "SET_ACCOUNT_MODALS",
+              payload: accountModals,
+            });
+          }, 1000);
+        })
+        .catch((err) => {
+          this.setState({
+            toast: true,
+            toastIsSuccess: false,
+          });
         });
-      }, 1000);
     } else {
       this.setState({
         toast: true,

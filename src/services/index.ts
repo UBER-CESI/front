@@ -33,7 +33,7 @@ export async function login(user: any) {
         ))
 }
 
-async function logout() {
+export async function logout() {
     return await POST("logout")
 }
 

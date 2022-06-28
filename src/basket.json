@@ -1,70 +1,73 @@
 {
-  "restaurant_id": 1,
-  "restaurant_name": "Pizza Hut",
-  "items": [
+  "restaurant_id": "62b5ae5a05c8d7c2c89677b7",
+  "restaurant_name": "resto",
+  "menus": [
     {
-      "id": 0,
-      "name": "Tacos",
-      "description": "Tacos 2 viandes",
-      "allergens": [
-        "lait",
-        "amandes"
-      ],
-      "options": [
+      "_id": "62b99fc3fc341c37d8c76f48",
+      "name": "menu 1",
+      "description": "Tacos + pizza pour les gros",
+      "items": [
         {
-          "name": "Sauce",
-          "multiple": true,
-          "required": true,
-          "values": [
+          "_id": "62b99c3c5151be76001b883b",
+          "name": "Tacos",
+          "description": "Bon gros Tacos",
+          "allergens": [
+            "lait",
+            "amandes"
+          ],
+          "options": [
             {
-              "value": "Ketchup",
-              "priceOffset": 0
+              "name": "Sauce",
+              "multiple": true,
+              "required": true,
+              "values": [
+                null,
+                null
+              ]
             },
             {
-              "value": "Mayonnaise",
-              "priceOffset": 0
+              "name": "Supplément viande",
+              "multiple": true,
+              "required": false,
+              "values": [
+                {
+                  "value": "Cordon bleu",
+                  "priceOffset": 2,
+                  "checked": true
+                }
+              ]
             }
-          ]
+          ],
+          "__v": 0
         },
         {
-          "name": "Supplément viande",
-          "multiple": true,
-          "required": false,
-          "values": [
+          "_id": "62b99cda9b059058420b2d7c",
+          "name": "Pizza",
+          "description": "Bonne grosse pizza",
+          "allergens": [
+            "fromage"
+          ],
+          "options": [
             {
-              "value": "Cordon bleu",
-              "priceOffset": 2
+              "name": "Sauce",
+              "multiple": true,
+              "required": true,
+              "values": [
+                {
+                  "value": "ketchup",
+                  "priceOffset": 0,
+                  "checked": true
+                }
+              ]
             }
-          ]
+          ],
+          "__v": 0
         }
       ],
-      "price": 12,
-      "quantity": 1,
-      "restaurantId": 0
-    },
-    {
-      "id": 1,
-      "name": "Pizza",
-      "description": "Bonne grosse pizza",
-      "allergens": [
-        "fromage"
-      ],
-      "options": [
-        {
-          "name": "Sauce",
-          "multiple": true,
-          "required": true,
-          "values": [
-            {
-              "value": "ketchup",
-              "priceOffset": 0
-            }
-          ]
-        }
-      ],
-      "price": 8,
-      "quantity": 1,
-      "restaurantId": 0
+      "price": 15,
+      "restaurantId": "62b5ae4205c8d7c2c89677b5",
+      "__v": 0,
+      "quantity": 3
     }
   ]
 }

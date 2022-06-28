@@ -39,8 +39,8 @@ interface CustomerRestaurantMenuProps {
 }
 
 interface IState {
-  menu: Menu | any;
-  itemQuantity: Array<number>;
+  menus: Menu | any;
+  menuQuantity: Array<number>;
   showToast: boolean;
   toastError: boolean;
 }
@@ -52,8 +52,8 @@ class CustomerRestaurantMenu extends React.Component<
   constructor(props: CustomerRestaurantMenuProps) {
     super(props);
     this.state = {
-      menu: {},
-      itemQuantity: [],
+      menus: {},
+      menuQuantity: [],
       showToast: false,
       toastError: false,
     };
@@ -61,50 +61,54 @@ class CustomerRestaurantMenu extends React.Component<
 
   componentDidMount = () => {
     getRestaurantMenuList(this.props.state.selectedRestaurantId).then(
-      (menu: any) => {
-        let items: Array<Item> = [];
-        menu.data.items.forEach((item: any, i: number) => {
-          getRestaurantItem(this.props.state.selectedRestaurantId, item).then(
-            (it: any) => {
-              items.push(it.data);
-              if (i === menu.data.items.length - 1) {
-                let fullMenu: Menu = {
-                  ...menu.data,
-                  items: items,
-                };
-                this.addCheckboxes(fullMenu);
+      (menusData: any) => {
+        let menus = JSON.parse(JSON.stringify(menusData.data));
+        let items = menus.map((menu: Menu) => {
+          return menu.items;
+        });
+        menus.forEach((menu: Menu) => {
+          menu.items = [];
+        });
+
+        menus.forEach((menu: Menu, i: number) => {
+          items[i].forEach((item: any, j: number) => {
+            getRestaurantItem(item).then((it: any) => {
+              menu.items.push(it.data);
+              if (i === menus.length - 1 && j === items[i].length - 1) {
+                this.addCheckboxes(menus);
               }
-            }
-          );
+            });
+          });
         });
       }
     );
   };
 
-  addCheckboxes = (menu: Menu) => {
-    menu.items.forEach((item: Item) => {
-      item.options.forEach((option: Option) => {
-        option.values.forEach((value: Value) => {
-          value.checked = false;
+  addCheckboxes = (menus: Array<Menu>) => {
+    menus.forEach((menu: Menu) => {
+      menu.items.forEach((item: Item) => {
+        item.options.forEach((option: Option) => {
+          option.values.forEach((value: Value) => {
+            value.checked = false;
+          });
         });
       });
     });
-    this.setState({ menu: menu });
-    this.addItemQuantity();
+    this.setState({ menus: menus });
+    this.addMenuQuantity(menus);
   };
 
-  addItemQuantity = () => {
-    let itemQuantity: Array<number> = [];
-    this.state.menu.forEach((item: Item) => {
-      itemQuantity.push(0);
+  addMenuQuantity = (menus: Array<Menu>) => {
+    let menuQuantity: Array<number> = [];
+    menus.forEach((menu: Menu) => {
+      menuQuantity.push(0);
     });
-    this.setState({ itemQuantity: itemQuantity });
+    this.setState({ menuQuantity: menuQuantity });
   };
 
-  selectedOptions = (itemIndex: number) => {
-    let menu = JSON.parse(JSON.stringify(this.state.menu));
+  selectedOptions = (menu: Menu, itemIndex: number, menuIndex: number) => {
     let options: Array<Option> = [];
-    menu[itemIndex].options.forEach((option: Option) => {
+    menu.items[itemIndex].options.forEach((option: Option) => {
       option.values.forEach((value: Value, valueIndex: number) => {
         if (!value.checked) {
           delete option.values[valueIndex];
@@ -115,26 +119,20 @@ class CustomerRestaurantMenu extends React.Component<
     return options;
   };
 
-  addToCart = (itemIndex: number) => {
+  addToCart = (menuIndex: number) => {
     const { dispatch, state } = this.props;
-    if (!state.basket.items) {
+    let menu = JSON.parse(JSON.stringify(this.state.menus[menuIndex]));
+    menu.items.forEach((item: Item, itemIndex: number) => {
+      item.options = this.selectedOptions(menu, itemIndex, menuIndex);
+    });
+    menu.quantity = this.state.menuQuantity[menuIndex];
+    if (!state.basket.menus) {
       dispatch({
         type: "SET_BASKET",
         payload: {
           restaurant_id: state.selectedRestaurantId,
           restaurant_name: this.restaurantName(),
-          items: [
-            {
-              id: 0,
-              name: this.state.menu[itemIndex].name,
-              description: this.state.menu[itemIndex].description,
-              allergens: this.state.menu[itemIndex].allergens,
-              price: this.state.menu[itemIndex].price,
-              quantity: this.state.itemQuantity[itemIndex],
-              restaurantId: state.selectedRestaurantId,
-              options: this.selectedOptions(itemIndex),
-            },
-          ],
+          menus: [menu],
         },
       });
       this.setState({ showToast: true, toastError: false });
@@ -143,16 +141,7 @@ class CustomerRestaurantMenu extends React.Component<
         this.setState({ showToast: true, toastError: true });
       } else {
         let basket = JSON.parse(JSON.stringify(state.basket));
-        basket.items.push({
-          id: state.basket.items.length,
-          name: this.state.menu[itemIndex].name,
-          description: this.state.menu[itemIndex].description,
-          allergens: this.state.menu[itemIndex].allergens,
-          price: this.state.menu[itemIndex].price,
-          quantity: this.state.itemQuantity[itemIndex],
-          restaurantId: state.selectedRestaurantId,
-          options: this.selectedOptions(itemIndex),
-        });
+        basket.menus.push(menu);
         dispatch({
           type: "SET_BASKET",
           payload: basket,
@@ -163,23 +152,29 @@ class CustomerRestaurantMenu extends React.Component<
   };
 
   changeCheckbox = (
+    menuIndex: number,
     itemIndex: number,
     optionIndex: number,
     valueIndex: number
   ) => {
-    let menu = [...this.state.menu];
-    menu[itemIndex].options[optionIndex].values[valueIndex].checked =
-      !menu[itemIndex].options[optionIndex].values[valueIndex].checked;
-    this.setState({ menu: menu });
+    let menu = JSON.parse(JSON.stringify(this.state.menus));
+    menu[menuIndex].items[itemIndex].options[optionIndex].values[
+      valueIndex
+    ].checked =
+      !menu[menuIndex].items[itemIndex].options[optionIndex].values[valueIndex]
+        .checked;
+    this.setState({ menus: menu });
   };
 
-  itemPrice = (itemIndex: number) => {
-    let price = this.state.menu[itemIndex].price;
-    this.state.menu[itemIndex].options.forEach((option: Option) => {
-      option.values.forEach((value: Value) => {
-        if (value.checked) {
-          price += value.priceOffset;
-        }
+  menuPrice = (menuIndex: number) => {
+    let price = this.state.menus[menuIndex].price;
+    this.state.menus[menuIndex].items.forEach((item: Item) => {
+      item.options.forEach((option: Option) => {
+        option.values.forEach((value: Value) => {
+          if (value.checked) {
+            price += value.priceOffset;
+          }
+        });
       });
     });
     return price;
@@ -206,123 +201,138 @@ class CustomerRestaurantMenu extends React.Component<
             </IonToolbar>
           </IonHeader>
           <IonContent>
-            {this.state.menu?.map((item: Item, itemIndex: number) => (
-              <IonCard key={itemIndex}>
-                <IonCardHeader>
-                  <IonCardTitle>
-                    <IonText>{item.name}</IonText>
-                    <IonText className="item-price">
-                      {this.itemPrice(itemIndex)}€
-                    </IonText>
-                  </IonCardTitle>
-                </IonCardHeader>
-                <IonCardContent>
-                  <IonText>
-                    <b>Description : </b>
-                    {item.description}
-                  </IonText>
-                  <br />
-                  <br />
-                  <IonText>
-                    <b>Allergènes : </b>{" "}
-                    {item.allergens.map((allergen: string, i: number) => {
-                      return (
-                        <span key={i}>
-                          {allergen}
-                          {i !== item.allergens.length - 1 ? ", " : ""}
-                        </span>
-                      );
-                    })}
-                  </IonText>
-                  <br />
-                  <br />
-                  <IonItemDivider color={"primary"}>
-                    <IonText>
-                      <b>Options</b>
-                    </IonText>
-                  </IonItemDivider>
-                  <IonText className="options">
-                    {item.options.map((option: Option, optionIndex: number) => (
-                      <div key={optionIndex}>
+            {this.state.menus.length > 0 &&
+              this.state.menus?.map((menu: Menu, menuIndex: number) => (
+                <IonCard key={menuIndex}>
+                  <IonCardHeader>
+                    <IonCardTitle>
+                      <IonText>{menu.name}</IonText>
+                      <IonText className="item-price">
+                        {this.menuPrice(menuIndex)}€
+                      </IonText>
+                    </IonCardTitle>
+                  </IonCardHeader>
+                  <IonCardContent>
+                    {menu.items?.map((item: Item, itemIndex: number) => (
+                      <div key={itemIndex}>
+                        <IonItemDivider color={"primary"}>
+                          <IonText>
+                            <b>{item.name}</b>
+                          </IonText>
+                        </IonItemDivider>
+                        <IonText>
+                          <b>Description : </b>
+                          {item.description}
+                        </IonText>
+                        <br />
+                        <br />
+                        <IonText>
+                          <b>Allergènes : </b>{" "}
+                          {item.allergens.map((allergen: string, i: number) => {
+                            return (
+                              <span key={i}>
+                                {allergen}
+                                {i !== item.allergens.length - 1 ? ", " : ""}
+                              </span>
+                            );
+                          })}
+                        </IonText>
+                        <br />
+                        <br />
                         <IonText>
                           <h2>
-                            <b>{option.name}</b>
+                            <b>Options</b>
                           </h2>
                         </IonText>
-                        <IonList lines="none">
-                          {option.values.map(
-                            (value: Value, valueIndex: number) => (
-                              <IonItem key={valueIndex}>
+                        <IonText className="options">
+                          {item.options.map(
+                            (option: Option, optionIndex: number) => (
+                              <div key={optionIndex}>
                                 <IonText>
-                                  <b>{value.value}</b>
+                                  <h2>
+                                    <b>{option.name}</b>
+                                  </h2>
                                 </IonText>
-                                <IonText slot="end">
-                                  {value.priceOffset > 0 && (
-                                    <IonText>+{value.priceOffset}€</IonText>
+                                <IonList lines="none">
+                                  {option.values.map(
+                                    (value: Value, valueIndex: number) => (
+                                      <IonItem key={valueIndex}>
+                                        <IonText>
+                                          <b>{value.value}</b>
+                                        </IonText>
+                                        <IonText slot="end">
+                                          {value.priceOffset > 0 && (
+                                            <IonText>
+                                              +{value.priceOffset}€
+                                            </IonText>
+                                          )}
+                                        </IonText>
+                                        <IonCheckbox
+                                          slot="end"
+                                          checked={
+                                            this.state.menus[menuIndex].items[
+                                              itemIndex
+                                            ].options[optionIndex].values[
+                                              valueIndex
+                                            ].checked
+                                          }
+                                          onClick={() => {
+                                            this.changeCheckbox(
+                                              menuIndex,
+                                              itemIndex,
+                                              optionIndex,
+                                              valueIndex
+                                            );
+                                          }}
+                                        />
+                                      </IonItem>
+                                    )
                                   )}
-                                </IonText>
-                                <IonCheckbox
-                                  slot="end"
-                                  checked={
-                                    this.state.menu.length > 0
-                                      ? this.state.menu[itemIndex].options[
-                                          optionIndex
-                                        ].values[valueIndex].checked
-                                      : false
-                                  }
-                                  onClick={() => {
-                                    this.changeCheckbox(
-                                      itemIndex,
-                                      optionIndex,
-                                      valueIndex
-                                    );
-                                  }}
-                                />
-                              </IonItem>
+                                </IonList>
+                                <br />
+                              </div>
                             )
                           )}
-                        </IonList>
-                        <br />
+                        </IonText>
+                        <hr />
                       </div>
                     ))}
-                  </IonText>
-                  <hr />
-                  <IonLabel>
-                    <b>Quantité</b>
-                  </IonLabel>
-                  <IonSelect
-                    value={
-                      this.state.itemQuantity.length > 0
-                        ? this.state.itemQuantity[itemIndex]
-                        : 0
-                    }
-                    onIonChange={(e) => {
-                      let itemQuantity = [...this.state.itemQuantity];
-                      itemQuantity[itemIndex] = e.detail.value;
-                      this.setState({ itemQuantity: itemQuantity });
-                    }}
-                  >
-                    {[0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10].map((i: number) => (
-                      <IonSelectOption key={i} value={i}>
-                        {i}
-                      </IonSelectOption>
-                    ))}
-                  </IonSelect>
-                  <IonButton
-                    disabled={
-                      this.state.itemQuantity[itemIndex] > 0 ? false : true
-                    }
-                    className="add-button"
-                    onClick={() => {
-                      this.addToCart(itemIndex);
-                    }}
-                  >
-                    <IonIcon slot="start" icon={add} />
-                    <IonLabel>Ajouter au panier</IonLabel>
-                  </IonButton>
-                </IonCardContent>
-              </IonCard>
-            ))}
+                    <IonLabel>
+                      <b>Quantité</b>
+                    </IonLabel>
+                    <IonSelect
+                      value={
+                        this.state.menuQuantity.length > 0
+                          ? this.state.menuQuantity[menuIndex]
+                          : 0
+                      }
+                      onIonChange={(e) => {
+                        let menuQuantity = [...this.state.menuQuantity];
+                        menuQuantity[menuIndex] = e.detail.value;
+                        this.setState({ menuQuantity: menuQuantity });
+                      }}
+                    >
+                      {[0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10].map((i: number) => (
+                        <IonSelectOption key={i} value={i}>
+                          {i}
+                        </IonSelectOption>
+                      ))}
+                    </IonSelect>
+                    <IonButton
+                      disabled={
+                        this.state.menuQuantity[menuIndex] > 0 ? false : true
+                      }
+                      className="add-button"
+                      onClick={() => {
+                        this.addToCart(menuIndex);
+                      }}
+                    >
+                      <IonIcon slot="start" icon={add} />
+                      <IonLabel>Ajouter au panier</IonLabel>
+                    </IonButton>
+                  </IonCardContent>
+                </IonCard>
+              ))}
             <IonToast
               isOpen={this.state.showToast}
               onDidDismiss={() => this.setState({ showToast: false })}

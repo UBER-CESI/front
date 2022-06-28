@@ -17,13 +17,33 @@ import { Order } from "../../../models/order";
 import { Item } from "../../../models/item";
 import { Option } from "../../../models/itemOption";
 import { Value } from "../../../models/itemOptionValue";
+import { getOrdersByCustomerId } from "../../../services/orders";
 
 interface OrdersProps {
   state: any;
   dispatch: any;
 }
 
-class Orders extends React.Component<OrdersProps> {
+interface IState {
+  orders: Array<Order>;
+}
+
+class Orders extends React.Component<OrdersProps, IState> {
+  constructor(props: OrdersProps) {
+    super(props);
+    this.state = {
+      orders: [],
+    };
+  }
+
+  componentDidMount = () => {
+    // getOrdersByCustomerId(this.props.state.customerInfo._id).then(
+    //   (res: any) => {
+    //     this.setState({ orders: res.data });
+    //   }
+    // );
+  };
+
   closeModal = () => {
     let accountModals = {
       ...this.props.state.accountModals,

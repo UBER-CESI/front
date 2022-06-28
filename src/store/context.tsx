@@ -2,6 +2,7 @@ import { createContext, useContext, useReducer } from "react";
 import type { ReactNode } from "react";
 
 let userJSON = require("../user.json");
+let basketJSON = require("../basket.json");
 
 const defaultState = {
   loginModal: false,
@@ -31,7 +32,7 @@ const defaultState = {
 
   address: "264 Bd Godard, 33300 Bordeaux",
 
-  basket: {},
+  basket: basketJSON,
   orders: [],
 
   registerSponsor: false,

@@ -59,6 +59,7 @@ import { getCustomer } from "./services/customer";
 import { getDeliverer } from "./services/deliverer";
 import { setupNotifications } from "./services/notifications";
 import { buildUrl } from "./services";
+import { getOrderList } from "./services/orders";
 
 setupIonicReact();
 setupNotifications(buildUrl("notifications"));
@@ -69,8 +70,8 @@ const App: React.FC = () => {
 
   useEffect(() => {
     let userLogin: loginType = {
-      email: "c@c.com",
-      password: "password",
+      email: "customer@customer.com",
+      password: "customer",
     };
     login(userLogin)
       .then((res) => {
@@ -101,6 +102,9 @@ const App: React.FC = () => {
                 dispatch({
                   type: "CHANGE_DELIVERER_INFO",
                   payload: deli.data,
+                });
+                getOrderList().then((orders: any) => {
+                  console.log(orders.data);
                 });
               })
               .catch((err) => {

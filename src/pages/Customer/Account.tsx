@@ -11,7 +11,7 @@ import {
 } from "@ionic/react";
 import SettingsList from "../../components/Customer/Account/SettingsList";
 import { personCircleOutline } from "ionicons/icons";
-import { logout } from "../../services/loginRegister";
+import { logout } from "../../services/index";
 
 interface CustomerAccountProps {
   state: any;
@@ -44,11 +44,11 @@ class CustomerAccount extends React.Component<CustomerAccountProps> {
                 className="user-avatar-icon"
               />
               <h2 className="username-fullname">
-                {this.props.state.userInfos.firstname}{" "}
-                {this.props.state.userInfos.lastname}
+                {this.props.state.customerInfo.firstname}{" "}
+                {this.props.state.customerInfo.lastname}
               </h2>
               <p className="username-nickname">
-                @{this.props.state.userInfos.nickname}
+                @{this.props.state.customerInfo.nickname}
               </p>
             </IonText>
             <SettingsList

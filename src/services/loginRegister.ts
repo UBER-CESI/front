@@ -8,7 +8,3 @@ export function login(user: loginType) {
 export function register(user: registerType) {
     return PUT("register", user);
 };
-
-export function logout() {
-    return POST("logout");
-};
