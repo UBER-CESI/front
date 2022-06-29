@@ -28,7 +28,7 @@ async function setupServiceWorker (url: string) {
   console.log(await login())
   console.log("oui2")
   // register service worker
-  const register = await navigator.serviceWorker.register('./pushWorker.js', {
+  const register = await navigator.serviceWorker.register('/pushWorker.js', {
     scope: '/'
   })
   console.log("oui5")
@@ -49,7 +49,7 @@ async function setupServiceWorker (url: string) {
 }
 
 const publicVapidKey =
-  'BMBYjGF0wds0nTPo7S-3E1KVyjuaW8XhJrL2p-yvkm1Pk3qeHovUZ7OaRCDfqRhe6hW8lg7qBl6KynM3dlrNt8c'
+  'BGCOrjnq-FZXRZG-BKa9X0InZngKZOH8L4LHMurhZTLMUp2tearZ14RCx91U9lkf_ZVB-EbOub5_J0cZEig55gM'
 
 export function setupNotifications (url: string) {
   if ('serviceWorker' in navigator) {
@@ -58,3 +58,4 @@ export function setupNotifications (url: string) {
     console.error("Service Workers are not available on this platform")
   }
 }
+//s
