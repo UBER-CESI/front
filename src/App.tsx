@@ -1,6 +1,8 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 import React, { useEffect } from "react";
 import { Redirect, Route } from "react-router-dom";
+import Cookies from "js-cookie";
+
 import {
   IonApp,
   IonIcon,
@@ -52,8 +54,6 @@ import "./theme/global.css";
 
 import { useModule } from "./store/context";
 
-import { login } from "./services/index";
-import { loginType } from "./models/loginRegister";
 import { getRestaurant, getRestaurantList } from "./services/restaurant";
 import { getCustomer } from "./services/customer";
 import { getDeliverer } from "./services/deliverer";
@@ -64,83 +64,75 @@ import { getOrderList } from "./services/orders";
 setupIonicReact();
 setupNotifications(buildUrl("notifications"));
 
+export function makeCalls(userData: any, state: any, dispatch: any) {
+  switch (userData.typeUser) {
+    case "customer":
+      getCustomer(userData._id)
+        .then((cust: any) => {
+          dispatch({
+            type: "CHANGE_CUSTOMER_INFO",
+            payload: cust.data,
+          });
+        })
+        .catch((err) => {
+          console.error(err);
+        });
+      break;
+    case "deliverer":
+      getDeliverer(userData._id)
+        .then((deli: any) => {
+          dispatch({
+            type: "CHANGE_DELIVERER_INFO",
+            payload: deli.data,
+          });
+          getOrderList().then((orders: any) => {
+            dispatch({
+              type: "CHANGE_ALL_ORDERS",
+              payload: orders.data,
+            });
+          });
+        })
+        .catch((err) => {
+          console.error(err);
+        });
+      break;
+    case "restaurant":
+      getRestaurant(userData._id)
+        .then((rest: any) => {
+          dispatch({
+            type: "CHANGE_RESTAURANT_INFO",
+            payload: rest.data,
+          });
+        })
+        .catch((err) => {
+          console.error(err);
+        });
+      break;
+  }
+
+  getRestaurantList()
+    .then((restaurants: any) => {
+      dispatch({
+        type: "SET_RESTAURANTS",
+        payload: restaurants.data,
+      });
+    })
+    .catch((e) => console.log(e));
+}
+
 const App: React.FC = () => {
   const { state, dispatch } = useModule();
   const [loadingScreen, setLoadingScreen] = React.useState(true);
 
   useEffect(() => {
-    let userLogin: loginType = {
-      email: "customer@customer.com",
-      password: "customer",
-    };
-    login(userLogin)
-      .then((res) => {
-        dispatch({
-          type: "CHANGE_USER_AUTH",
-          payload: true,
-        });
-        dispatch({
-          type: "CHANGE_TYPE_USER",
-          payload: res.data.typeUser,
-        });
-        switch (res.data.typeUser) {
-          case "customer":
-            getCustomer(res.data._id)
-              .then((cust: any) => {
-                dispatch({
-                  type: "CHANGE_CUSTOMER_INFO",
-                  payload: cust.data,
-                });
-              })
-              .catch((err) => {
-                console.log(err);
-              });
-            break;
-          case "deliverer":
-            getDeliverer(res.data._id)
-              .then((deli: any) => {
-                dispatch({
-                  type: "CHANGE_DELIVERER_INFO",
-                  payload: deli.data,
-                });
-                getOrderList().then((orders: any) => {
-                  console.log(orders.data);
-                });
-              })
-              .catch((err) => {
-                console.log(err);
-              });
-            break;
-          case "restaurant":
-            getRestaurant(res.data._id)
-              .then((rest: any) => {
-                dispatch({
-                  type: "CHANGE_RESTAURANT_INFO",
-                  payload: rest.data,
-                });
-              })
-              .catch((err) => {
-                console.log(err);
-              });
-            break;
-        }
-        getRestaurantList()
-          .then((restaurants: any) => {
-            console.log(restaurants);
-            dispatch({
-              type: "SET_RESTAURANTS",
-              payload: restaurants.data,
-            });
-          })
-          .catch((e) => console.log(e));
-        dispatch({
-          type: "CHANGE_USER_INFO",
-          payload: res.data,
-        });
-      })
-      .catch((err) => {
-        console.log(err);
-      });
+    let userData: any = Cookies.get("userData");
+    if (userData) {
+      userData = JSON.parse(userData);
+      dispatch({ type: "CHANGE_USER_INFO", payload: userData });
+      dispatch({ type: "CHANGE_USER_AUTH", payload: true });
+
+      makeCalls(userData, state, dispatch);
+    }
     setTimeout(() => {
       setLoadingScreen(false);
     }, 2100);

@@ -15,7 +15,7 @@ const defaultState = {
     about: false,
   },
 
-  userAuth: true,
+  userAuth: false,
   userInfo: {},
   typeUser: "",
   customerInfo: {},
@@ -25,6 +25,8 @@ const defaultState = {
   delivererInfo: {},
   delivererHistory: [],
   userInfos: userJSON,
+
+  allOrders: [],
 
   restaurants: [],
   selectedRestaurantId: 0,
@@ -61,7 +63,8 @@ export type ActionType =
   | "SET_SELECTED_RESTAURANT_ID"
   | "SET_MENUS"
   | "CHANGE_TIP"
-  | "SET_REGISTER_SPONSOR";
+  | "SET_REGISTER_SPONSOR"
+  | "CHANGE_ALL_ORDERS";
 
 export type ActionWithParamsType = {
   type: ActionType;
