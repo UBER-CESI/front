@@ -12,6 +12,8 @@ import {
   IonToolbar,
 } from "@ionic/react";
 import { Clipboard } from "@capacitor/clipboard";
+import Cookies from "universal-cookie";
+import { login } from "../services/index";
 
 interface LogInModalProps {
   state: any;
@@ -41,12 +43,24 @@ class LogInModal extends React.Component<LogInModalProps, IState> {
   checkForm = () => {
     var validRegex =
       /^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*$/;
-    if (this.state.email.match(validRegex) && this.state.password.length > 9) {
-      this.setState({ toast: true, toastIsSuccess: true });
-      setTimeout(() => {
-        this.closeModal();
-        this.props.dispatch({ type: "CHANGE_USER_AUTH", payload: true });
-      }, 1000);
+    if (this.state.email.match(validRegex) && this.state.password.length > 4) {
+      let user = {
+        email: this.state.email,
+        password: this.state.password,
+      };
+      login(user)
+        .then((res) => {
+          const cookies = new Cookies();
+          cookies.set("userData", res.data, { path: "/" });
+          this.setState({ toast: true, toastIsSuccess: true });
+          setTimeout(() => {
+            this.closeModal();
+            this.props.dispatch({ type: "CHANGE_USER_AUTH", payload: true });
+          }, 1000);
+        })
+        .catch((err) => {
+          this.setState({ toast: true, toastIsSuccess: false });
+        });
     } else {
       this.setState({ toast: true, toastIsSuccess: false });
     }

@@ -15,7 +15,7 @@ const defaultState = {
     about: false,
   },
 
-  userAuth: true,
+  userAuth: false,
   userInfo: {},
   typeUser: "",
   customerInfo: {},
