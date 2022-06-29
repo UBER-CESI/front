@@ -41,8 +41,8 @@ export function createRestaurantMenu(restId: number, menu: Menu) {
     return PUT(restaurantUrl + restId + "/menu", menu);
 };
 
-export function getRestaurantMenu(restId: number, menuId: number) {
-    return GET(restaurantUrl + restId + "/menu/" + menuId);
+export function getRestaurantMenu(menuId: string) {
+    return GET("menu/" + menuId);
 };
 
 export function updateRestaurantMenu(restId: number, menuId: number, menu: Menu) {

@@ -6,5 +6,6 @@ export interface Menu {
     name: string;
     description: string;
     price: number;
+    quantity?: number;
     items: Array<Item>;
 };

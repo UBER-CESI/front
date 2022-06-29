@@ -34,6 +34,7 @@ const defaultState = {
 
   basket: basketJSON,
   orders: [],
+  tip: 0,
 
   registerSponsor: false,
 };
@@ -59,6 +60,7 @@ export type ActionType =
   | "SET_ORDERS"
   | "SET_SELECTED_RESTAURANT_ID"
   | "SET_MENUS"
+  | "CHANGE_TIP"
   | "SET_REGISTER_SPONSOR";
 
 export type ActionWithParamsType = {
@@ -117,6 +119,8 @@ function moduleReducer(state: StateType, action: ActionWithParamsType) {
       return { ...state, selectedRestaurantId: action.payload };
     case "SET_MENUS":
       return { ...state, menus: action.payload };
+    case "CHANGE_TIP":
+      return { ...state, tip: action.payload };
     case "SET_REGISTER_SPONSOR":
       return { ...state, registerSponsor: true };
     default:

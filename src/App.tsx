@@ -126,6 +126,7 @@ const App: React.FC = () => {
         }
         getRestaurantList()
           .then((restaurants: any) => {
+            console.log(restaurants);
             dispatch({
               type: "SET_RESTAURANTS",
               payload: restaurants.data,

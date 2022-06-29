@@ -68,6 +68,7 @@ class CustomerBasket extends React.Component<CustomerBasketProps> {
     basket.menus.forEach((menu: any) => {
       total += menu.price * menu.quantity;
     });
+    total += +this.props.state.tip;
     return Math.round(total * 100) / 100;
   };
 
@@ -237,6 +238,21 @@ class CustomerBasket extends React.Component<CustomerBasketProps> {
                     );
                   }
                 )}
+                <IonText>
+                  Pourboire :
+                  <IonInput
+                    type="number"
+                    value={this.props.state.tip}
+                    min="0"
+                    onInput={(e: any) => {
+                      this.props.dispatch({
+                        type: "CHANGE_TIP",
+                        payload: e.target.value,
+                      });
+                    }}
+                  />
+                  €
+                </IonText>
                 <IonText>
                   <h2>Commande : {this.calculateTotal()}€</h2>
                 </IonText>
