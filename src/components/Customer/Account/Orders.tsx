@@ -43,26 +43,27 @@ class Orders extends React.Component<OrdersProps, IState> {
     const { ordersData }: any = await getOrdersByCustomerId(
       this.props.state.customerInfo._id
     );
-    let orders = JSON.parse(JSON.stringify(ordersData.data));
-    console.log(orders.data);
-    let menus: any = [];
-    orders.forEach((order: any, orderIndex: number) => {
-      order.menus.forEach((menu: any, menuIndex: number) => {
-        getRestaurantMenu(menu).then((menuData: any) => {
-          let menuItem = JSON.parse(JSON.stringify(menuData.data));
-          menus.push(menuItem);
-          if (
-            orderIndex === orders.data.length - 1 &&
-            menuIndex === order.menus.length - 1
-          ) {
-            order.menus = menus;
-            this.setState({
-              orders: orders,
-            });
-          }
+    if (ordersData) {
+      let orders = JSON.parse(JSON.stringify(ordersData.data));
+      let menus: any = [];
+      orders.forEach((order: any, orderIndex: number) => {
+        order.menus.forEach((menu: any, menuIndex: number) => {
+          getRestaurantMenu(menu).then((menuData: any) => {
+            let menuItem = JSON.parse(JSON.stringify(menuData.data));
+            menus.push(menuItem);
+            if (
+              orderIndex === orders.data.length - 1 &&
+              menuIndex === order.menus.length - 1
+            ) {
+              order.menus = menus;
+              this.setState({
+                orders: orders,
+              });
+            }
+          });
         });
       });
-    });
+    }
   };
 
   closeModal = () => {

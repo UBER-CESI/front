@@ -27,15 +27,15 @@ interface CustomerBasketProps {
 }
 
 class CustomerBasket extends React.Component<CustomerBasketProps> {
-  changeMenuQuantity = (menu: any, quantity: number) => {
+  changeMenuQuantity = (quantity: number, menuIndex: number) => {
     const { dispatch } = this.props;
     if (quantity > 0 && quantity <= 10) {
       dispatch({
         type: "SET_BASKET",
         payload: {
           ...this.props.state.basket,
-          menus: this.props.state.basket.menus.map((m: any) => {
-            if (m._id === menu._id) {
+          menus: this.props.state.basket.menus.map((m: any, mIndex: number) => {
+            if (menuIndex === mIndex) {
               return { ...m, quantity: quantity };
             }
             return m;
@@ -44,14 +44,11 @@ class CustomerBasket extends React.Component<CustomerBasketProps> {
       });
     }
     if (quantity <= 0) {
+      let newBasket = JSON.parse(JSON.stringify(this.props.state.basket));
+      delete newBasket.menus[menuIndex];
       dispatch({
         type: "SET_BASKET",
-        payload: {
-          ...this.props.state.basket,
-          menus: this.props.state.basket.menus.filter(
-            (m: any) => m._id !== menu._id
-          ),
-        },
+        payload: newBasket,
       });
     }
     if (this.props.state.basket.menus.length === 0) {
@@ -118,8 +115,8 @@ class CustomerBasket extends React.Component<CustomerBasketProps> {
                                 className="quantity-buttons"
                                 onClick={() => {
                                   this.changeMenuQuantity(
-                                    menu,
-                                    menu.quantity + 1
+                                    menu.quantity + 1,
+                                    menuIndex
                                   );
                                 }}
                               >
@@ -167,8 +164,8 @@ class CustomerBasket extends React.Component<CustomerBasketProps> {
                                 size="small"
                                 onClick={() => {
                                   this.changeMenuQuantity(
-                                    menu,
-                                    menu.quantity - 1
+                                    menu.quantity - 1,
+                                    menuIndex
                                   );
                                 }}
                               >

@@ -108,6 +108,9 @@ export function makeCalls(userData: any, state: any, dispatch: any) {
           console.error(err);
         });
       break;
+    default:
+      dispatch({ type: "CHANGE_USER_AUTH", payload: false });
+      break;
   }
 
   getRestaurantList()
@@ -129,6 +132,7 @@ const App: React.FC = () => {
     if (userData) {
       userData = JSON.parse(userData);
       dispatch({ type: "CHANGE_USER_INFO", payload: userData });
+      dispatch({ type: "CHANGE_TYPE_USER", payload: userData.typeUser });
       dispatch({ type: "CHANGE_USER_AUTH", payload: true });
 
       makeCalls(userData, state, dispatch);
