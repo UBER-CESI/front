@@ -12,7 +12,7 @@ import {
   IonToolbar,
 } from "@ionic/react";
 import { register } from "../services/loginRegister";
-import { login } from "../services/index";
+import { login, registerNotifications } from "../services/index";
 import Cookies from "universal-cookie";
 import { makeCalls } from "../App";
 
@@ -99,6 +99,7 @@ class RegisterModal extends React.Component<RegisterModalProps, IState> {
               this.closeModal();
               this.props.dispatch({ type: "CHANGE_USER_AUTH", payload: true });
             }, 1000);
+            registerNotifications()
           })
           .catch((err) => {
             this.setState({ toast: true, toastIsSuccess: false });

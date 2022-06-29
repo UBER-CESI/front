@@ -57,12 +57,10 @@ import { useModule } from "./store/context";
 import { getRestaurant, getRestaurantList } from "./services/restaurant";
 import { getCustomer } from "./services/customer";
 import { getDeliverer } from "./services/deliverer";
-import { setupNotifications } from "./services/notifications";
 import { buildUrl } from "./services";
 import { getOrderList } from "./services/orders";
 
 setupIonicReact();
-setupNotifications(buildUrl("notifications"));
 
 export function makeCalls(userData: any, state: any, dispatch: any) {
   switch (userData.typeUser) {

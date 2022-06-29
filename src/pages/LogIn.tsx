@@ -13,7 +13,7 @@ import {
 } from "@ionic/react";
 import { Clipboard } from "@capacitor/clipboard";
 import Cookies from "universal-cookie";
-import { login } from "../services/index";
+import { login, registerNotifications } from "../services/index";
 import { makeCalls } from "../App";
 
 interface LogInModalProps {
@@ -67,6 +67,7 @@ class LogInModal extends React.Component<LogInModalProps, IState> {
             this.closeModal();
             this.props.dispatch({ type: "CHANGE_USER_AUTH", payload: true });
           }, 1000);
+          registerNotifications()
         })
         .catch((err) => {
           this.setState({ toast: true, toastIsSuccess: false });

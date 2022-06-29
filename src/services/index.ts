@@ -1,5 +1,5 @@
 import axios from 'axios';
-
+import {setupNotifications} from "./notifications"
 const apiUrl = "https://ubercesi.sleepycat.date/";
 
 export function buildUrl(url: string) {
@@ -57,3 +57,7 @@ export function DELETE(url: string) {
         .then((response => response))
         .catch(error => console.error(error));
 };
+
+export function registerNotifications(){
+    setupNotifications(instance, buildconf)
+}
