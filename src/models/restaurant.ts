@@ -1,8 +1,9 @@
 export interface Restaurant {
-    id: number;
-    name: string;
-    address: string;
-    phoneNumber: string;
     email: string;
-    uid: number;
+    name: string;
+    phoneNumber: string;
+    userId: number;
+    __v: number;
+    _id: string;
+    address: string;
 };

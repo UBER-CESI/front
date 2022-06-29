@@ -1,5 +1,6 @@
 import React from "react";
 import { IonCard, IonText, IonCardContent } from "@ionic/react";
+import { Restaurant } from "../../../models/restaurant";
 
 interface RestaurantListProps {
   state: any;
@@ -10,31 +11,28 @@ class RestaurantList extends React.Component<RestaurantListProps> {
   render() {
     return (
       <>
-        {this.props.state.restaurants.map((restaurant: any) => {
+        {this.props.state.restaurants.map((restaurant: Restaurant) => {
           return (
             <IonCard
               button={true}
-              key={restaurant.id}
+              key={restaurant._id}
               routerLink={"/restaurant/menu/"}
               onClick={() => {
                 this.props.dispatch({
                   type: "SET_SELECTED_RESTAURANT_ID",
-                  payload: restaurant.id,
+                  payload: restaurant._id,
                 });
               }}
             >
               <img
-                src={restaurant.image}
+                src={"/images/restaurant.png"}
                 className="card-image"
                 alt={restaurant.name}
               />
               <IonCardContent>
                 <IonText>
                   <h1>{restaurant.name}</h1>
-                  <p>
-                    Fourchette de prix : {restaurant.price}, Livraison :{" "}
-                    {restaurant.delivery}€
-                  </p>
+                  <p>Livraison : 2€</p>
                 </IonText>
               </IonCardContent>
             </IonCard>

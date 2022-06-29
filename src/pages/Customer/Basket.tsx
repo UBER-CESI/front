@@ -1,6 +1,9 @@
 import React from "react";
 import {
   IonButton,
+  IonCard,
+  IonCardContent,
+  IonCardHeader,
   IonChip,
   IonContent,
   IonHeader,
@@ -8,7 +11,6 @@ import {
   IonItem,
   IonLabel,
   IonList,
-  IonListHeader,
   IonNote,
   IonPage,
   IonText,
@@ -24,37 +26,19 @@ interface CustomerBasketProps {
   dispatch: any;
 }
 
-// interface Basket {
-//   restaurant_id: string;
-//   restaurant_name: string;
-//   items: [BasketItem];
-// }
-
-interface BasketItem {
-  id: any;
-  name: string;
-  price: number;
-  quantity: number;
-  image: string;
-  options: Array<Option>;
-}
-
 class CustomerBasket extends React.Component<CustomerBasketProps> {
-  changeItemQuantity = (item: BasketItem, quantity: number) => {
+  changeMenuQuantity = (menu: any, quantity: number) => {
     const { dispatch } = this.props;
     if (quantity > 0 && quantity <= 10) {
       dispatch({
         type: "SET_BASKET",
         payload: {
           ...this.props.state.basket,
-          items: this.props.state.basket.items.map((i: BasketItem) => {
-            if (i.id === item.id) {
-              return {
-                ...i,
-                quantity: quantity,
-              };
+          menus: this.props.state.basket.menus.map((m: any) => {
+            if (m._id === menu._id) {
+              return { ...m, quantity: quantity };
             }
-            return i;
+            return m;
           }),
         },
       });
@@ -64,13 +48,13 @@ class CustomerBasket extends React.Component<CustomerBasketProps> {
         type: "SET_BASKET",
         payload: {
           ...this.props.state.basket,
-          items: this.props.state.basket.items.filter((i: BasketItem) => {
-            return i.id !== item.id;
-          }),
+          menus: this.props.state.basket.menus.filter(
+            (m: any) => m._id !== menu._id
+          ),
         },
       });
     }
-    if (this.props.state.basket.items.length === 0) {
+    if (this.props.state.basket.menus.length === 0) {
       dispatch({
         type: "SET_BASKET",
         payload: {},
@@ -81,9 +65,10 @@ class CustomerBasket extends React.Component<CustomerBasketProps> {
   calculateTotal = () => {
     const { basket } = this.props.state;
     let total = 0;
-    basket.items.forEach((item: BasketItem) => {
-      total += item.price * item.quantity;
+    basket.menus.forEach((menu: any) => {
+      total += menu.price * menu.quantity;
     });
+    total += +this.props.state.tip;
     return Math.round(total * 100) / 100;
   };
 
@@ -106,128 +91,176 @@ class CustomerBasket extends React.Component<CustomerBasketProps> {
             </IonToolbar>
           </IonHeader>
           <IonContent fullscreen className="ion-text-center">
-            {this.props.state.basket.items?.length > 0 ? (
+            {this.props.state.basket.menus?.length > 0 ? (
               <>
-                <IonList>
-                  <IonListHeader>
-                    {this.props.state.basket.restaurant_name}
-                  </IonListHeader>
-                  {this.props.state.basket.items.map(
-                    (item: BasketItem, i: number) => {
-                      return (
-                        <IonItem key={i}>
-                          <IonLabel>
-                            <h2>{item.name}</h2>
-                            {item.options && (
-                              <>
-                                <b>Options :</b>{" "}
-                                {item.options.map(
-                                  (option: Option, j: number) => {
-                                    return (
-                                      <div key={j}>
-                                        {option.values.length > 0 && (
-                                          <>
-                                            <br />
-                                            {option.name}
-                                            <ul>
-                                              {option.values.map(
-                                                (value: Value, k: number) => {
-                                                  return (
-                                                    <div key={k}>
-                                                      {value && (
-                                                        <li key={k}>
-                                                          {value.value}
-                                                        </li>
-                                                      )}
-                                                    </div>
-                                                  );
-                                                }
-                                              )}
-                                            </ul>
-                                          </>
-                                        )}
-                                      </div>
-                                    );
-                                  }
-                                )}
-                              </>
-                            )}
-                          </IonLabel>
-                          <IonNote slot="end" color="primary">
-                            {Math.round(item.price * item.quantity * 100) / 100}
-                            €
-                          </IonNote>
-                          <IonNote slot="end">
-                            <IonButton
-                              color="success"
-                              size="small"
-                              className="quantity-buttons"
-                              onClick={() => {
-                                this.changeItemQuantity(
-                                  item,
-                                  item.quantity + 1
-                                );
-                              }}
+                <IonLabel>
+                  <h1 className="restaurant-name">
+                    Commande {this.props.state.basket.restaurant_name}
+                  </h1>
+                </IonLabel>
+                {this.props.state.basket.menus.map(
+                  (menu: any, menuIndex: number) => {
+                    return (
+                      <IonCard key={menuIndex}>
+                        <IonCardHeader>
+                          <h2>
+                            <b>{menu.name}</b>
+                          </h2>
+                        </IonCardHeader>
+                        <IonCardContent>
+                          <IonItem>
+                            {Math.round(menu.price * menu.quantity * 100) / 100}
+                            €<IonNote slot="end">Quantité : </IonNote>
+                            <IonNote slot="end">
+                              <IonButton
+                                color="success"
+                                size="small"
+                                className="quantity-buttons"
+                                onClick={() => {
+                                  this.changeMenuQuantity(
+                                    menu,
+                                    menu.quantity + 1
+                                  );
+                                }}
+                              >
+                                +
+                              </IonButton>
+                            </IonNote>
+                            <IonNote
+                              slot="end"
+                              color="primary"
+                              className="basket-quantity-input"
                             >
-                              +
-                            </IonButton>
-                          </IonNote>
-                          <IonNote
-                            slot="end"
-                            color="primary"
-                            className="basket-quantity-input"
-                          >
-                            <IonInput
-                              type="number"
-                              value={item.quantity}
-                              className="ion-text-center"
-                              min="0"
-                              max="11"
-                              onInput={(e: any) => {
-                                this.props.dispatch({
-                                  type: "SET_BASKET",
-                                  payload: {
-                                    restaurant_id:
-                                      this.props.state.basket.restaurant_id,
-                                    restaurant_name:
-                                      this.props.state.basket.restaurant_name,
-                                    items: this.props.state.basket.items.map(
-                                      (it: BasketItem) => {
-                                        if (it.id === item.id) {
-                                          return {
-                                            ...it,
-                                            quantity: e.target.value,
-                                          };
+                              <IonInput
+                                type="number"
+                                value={menu.quantity}
+                                className="ion-text-center"
+                                min="0"
+                                max="11"
+                                onInput={(e: any) => {
+                                  this.props.dispatch({
+                                    type: "SET_BASKET",
+                                    payload: {
+                                      restaurant_id:
+                                        this.props.state.basket.restaurant_id,
+                                      restaurant_name:
+                                        this.props.state.basket.restaurant_name,
+                                      menus: this.props.state.basket.menus.map(
+                                        (m: any, mIndex: number) => {
+                                          if (mIndex === menuIndex) {
+                                            return {
+                                              ...m,
+                                              quantity: e.target.value,
+                                            };
+                                          }
+                                          return m;
                                         }
-                                        return it;
-                                      }
-                                    ),
-                                  },
-                                });
-                              }}
-                            />
-                          </IonNote>
-                          <IonNote slot="end">
-                            <IonButton
-                              color="danger"
-                              size="small"
-                              onClick={() => {
-                                this.changeItemQuantity(
-                                  item,
-                                  item.quantity - 1
-                                );
-                              }}
-                            >
-                              -
-                            </IonButton>
-                          </IonNote>
-                        </IonItem>
-                      );
-                    }
-                  )}
-                </IonList>
+                                      ),
+                                    },
+                                  });
+                                }}
+                              />
+                            </IonNote>
+                            <IonNote slot="end">
+                              <IonButton
+                                color="danger"
+                                size="small"
+                                onClick={() => {
+                                  this.changeMenuQuantity(
+                                    menu,
+                                    menu.quantity - 1
+                                  );
+                                }}
+                              >
+                                -
+                              </IonButton>
+                            </IonNote>
+                          </IonItem>
+                          <IonList>
+                            {menu.items.map((item: any, itemIndex: number) => {
+                              return (
+                                <IonItem key={itemIndex}>
+                                  <IonLabel>
+                                    <h2>{item.name}</h2>
+                                    {item.options && (
+                                      <>
+                                        <b>Options :</b>{" "}
+                                        {item.options.map(
+                                          (
+                                            option: Option,
+                                            optionIndex: number
+                                          ) => {
+                                            return (
+                                              <div key={optionIndex}>
+                                                {option.values.length > 0 && (
+                                                  <>
+                                                    <br />
+                                                    {option.name}
+                                                    <ul>
+                                                      {option.values.map(
+                                                        (
+                                                          value: Value,
+                                                          valueIndex: number
+                                                        ) => {
+                                                          return (
+                                                            <div
+                                                              key={valueIndex}
+                                                            >
+                                                              {value && (
+                                                                <li
+                                                                  key={
+                                                                    valueIndex
+                                                                  }
+                                                                >
+                                                                  {value.value}
+                                                                </li>
+                                                              )}
+                                                            </div>
+                                                          );
+                                                        }
+                                                      )}
+                                                    </ul>
+                                                  </>
+                                                )}
+                                              </div>
+                                            );
+                                          }
+                                        )}
+                                      </>
+                                    )}
+                                  </IonLabel>
+                                </IonItem>
+                              );
+                            })}
+                          </IonList>
+                        </IonCardContent>
+                      </IonCard>
+                    );
+                  }
+                )}
                 <IonText>
-                  <h2>Total : {this.calculateTotal()}€</h2>
+                  Pourboire :
+                  <IonInput
+                    type="number"
+                    value={this.props.state.tip}
+                    min="0"
+                    onInput={(e: any) => {
+                      this.props.dispatch({
+                        type: "CHANGE_TIP",
+                        payload: e.target.value,
+                      });
+                    }}
+                  />
+                  €
+                </IonText>
+                <IonText>
+                  <h2>Commande : {this.calculateTotal()}€</h2>
+                </IonText>
+                <IonText>
+                  <h2>Frais de livraison : 2€</h2>
+                </IonText>
+                <IonText>
+                  <h2>Total : {this.calculateTotal() + 2}€</h2>
                 </IonText>
                 <IonChip color="primary" className="order-chip" outline>
                   <IonText>
@@ -271,6 +304,7 @@ class CustomerBasket extends React.Component<CustomerBasketProps> {
             }
             .order-chip {
               margin-top: 50px;
+              margin-bottom: 50px;
             }
             .homepage-link {
               text-decoration: none;
@@ -286,6 +320,11 @@ class CustomerBasket extends React.Component<CustomerBasketProps> {
             .quantity-buttons {
               margin: 0;
               margin-left: 11px;
+            }
+            .restaurant-name {
+              margin-top: 20px;
+              margin-bottom: 20px;
+              color: #5fb709;
             }
           `}
         </style>
