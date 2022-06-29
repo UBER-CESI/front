@@ -26,6 +26,8 @@ const defaultState = {
   delivererHistory: [],
   userInfos: userJSON,
 
+  allOrders: [],
+
   restaurants: [],
   selectedRestaurantId: 0,
   menus: [],
@@ -61,7 +63,8 @@ export type ActionType =
   | "SET_SELECTED_RESTAURANT_ID"
   | "SET_MENUS"
   | "CHANGE_TIP"
-  | "SET_REGISTER_SPONSOR";
+  | "SET_REGISTER_SPONSOR"
+  | "CHANGE_ALL_ORDERS";
 
 export type ActionWithParamsType = {
   type: ActionType;

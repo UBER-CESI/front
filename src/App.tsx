@@ -64,6 +64,62 @@ import { getOrderList } from "./services/orders";
 setupIonicReact();
 setupNotifications(buildUrl("notifications"));
 
+export function makeCalls(userData: any, state: any, dispatch: any) {
+  switch (userData.typeUser) {
+    case "customer":
+      getCustomer(userData._id)
+        .then((cust: any) => {
+          dispatch({
+            type: "CHANGE_CUSTOMER_INFO",
+            payload: cust.data,
+          });
+        })
+        .catch((err) => {
+          console.error(err);
+        });
+      break;
+    case "deliverer":
+      getDeliverer(userData._id)
+        .then((deli: any) => {
+          dispatch({
+            type: "CHANGE_DELIVERER_INFO",
+            payload: deli.data,
+          });
+          getOrderList().then((orders: any) => {
+            dispatch({
+              type: "CHANGE_ALL_ORDERS",
+              payload: orders.data,
+            });
+          });
+        })
+        .catch((err) => {
+          console.error(err);
+        });
+      break;
+    case "restaurant":
+      getRestaurant(userData._id)
+        .then((rest: any) => {
+          dispatch({
+            type: "CHANGE_RESTAURANT_INFO",
+            payload: rest.data,
+          });
+        })
+        .catch((err) => {
+          console.error(err);
+        });
+      break;
+  }
+
+  getRestaurantList()
+    .then((restaurants: any) => {
+      dispatch({
+        type: "SET_RESTAURANTS",
+        payload: restaurants.data,
+      });
+    })
+    .catch((e) => console.log(e));
+}
+
 const App: React.FC = () => {
   const { state, dispatch } = useModule();
   const [loadingScreen, setLoadingScreen] = React.useState(true);
@@ -75,56 +131,7 @@ const App: React.FC = () => {
       dispatch({ type: "CHANGE_USER_INFO", payload: userData });
       dispatch({ type: "CHANGE_USER_AUTH", payload: true });
 
-      switch (userData.typeUser) {
-        case "customer":
-          getCustomer(userData._id)
-            .then((cust: any) => {
-              dispatch({
-                type: "CHANGE_CUSTOMER_INFO",
-                payload: cust.data,
-              });
-            })
-            .catch((err) => {
-              console.log(err);
-            });
-          break;
-        case "deliverer":
-          getDeliverer(userData._id)
-            .then((deli: any) => {
-              dispatch({
-                type: "CHANGE_DELIVERER_INFO",
-                payload: deli.data,
-              });
-              getOrderList().then((orders: any) => {
-                console.log(orders.data);
-              });
-            })
-            .catch((err) => {
-              console.log(err);
-            });
-          break;
-        case "restaurant":
-          getRestaurant(userData._id)
-            .then((rest: any) => {
-              dispatch({
-                type: "CHANGE_RESTAURANT_INFO",
-                payload: rest.data,
-              });
-            })
-            .catch((err) => {
-              console.log(err);
-            });
-          break;
-      }
-
-      getRestaurantList()
-        .then((restaurants: any) => {
-          dispatch({
-            type: "SET_RESTAURANTS",
-            payload: restaurants.data,
-          });
-        })
-        .catch((e) => console.log(e));
+      makeCalls(userData, state, dispatch);
     }
     setTimeout(() => {
       setLoadingScreen(false);

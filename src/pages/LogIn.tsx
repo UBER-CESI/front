@@ -14,6 +14,7 @@ import {
 import { Clipboard } from "@capacitor/clipboard";
 import Cookies from "universal-cookie";
 import { login } from "../services/index";
+import { makeCalls } from "../App";
 
 interface LogInModalProps {
   state: any;
@@ -53,6 +54,15 @@ class LogInModal extends React.Component<LogInModalProps, IState> {
           const cookies = new Cookies();
           cookies.set("userData", res.data, { path: "/" });
           this.setState({ toast: true, toastIsSuccess: true });
+          this.props.dispatch({
+            type: "CHANGE_USER_INFO",
+            payload: res.data,
+          });
+          this.props.dispatch({
+            type: "CHANGE_TYPE_USER",
+            payload: res.data.typeUser,
+          });
+          makeCalls(res.data, this.props.state, this.props.dispatch);
           setTimeout(() => {
             this.closeModal();
             this.props.dispatch({ type: "CHANGE_USER_AUTH", payload: true });

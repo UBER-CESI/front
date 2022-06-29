@@ -12,6 +12,9 @@ import {
   IonToolbar,
 } from "@ionic/react";
 import { register } from "../services/loginRegister";
+import { login } from "../services/index";
+import Cookies from "universal-cookie";
+import { makeCalls } from "../App";
 
 interface RegisterModalProps {
   state: any;
@@ -69,16 +72,38 @@ class RegisterModal extends React.Component<RegisterModalProps, IState> {
         password: this.state.password,
         nickname: this.state.nickname,
         phone: this.state.phoneNumber,
-        typeUser: "customer",
+        typeUser: this.state.typeUser,
       };
-      register(user).then((res) => {});
-      this.setState({ toast: true, toastIsSuccess: true });
-      if (this.state.sponsorCode.length > 0)
-        this.props.dispatch({ type: "SET_REGISTER_SPONSOR" });
-      setTimeout(() => {
-        this.closeModal();
-        this.props.dispatch({ type: "CHANGE_USER_AUTH", payload: true });
-      }, 1000);
+      register(user).then((res) => {
+        let loginUser = {
+          email: this.state.email,
+          password: this.state.password,
+        };
+        login(loginUser)
+          .then((res) => {
+            const cookies = new Cookies();
+            cookies.set("userData", res.data, { path: "/" });
+            this.setState({ toast: true, toastIsSuccess: true });
+            this.props.dispatch({
+              type: "CHANGE_USER_INFO",
+              payload: res.data,
+            });
+            this.props.dispatch({
+              type: "CHANGE_TYPE_USER",
+              payload: res.data.typeUser,
+            });
+            makeCalls(res.data, this.props.state, this.props.dispatch);
+            if (this.state.sponsorCode.length > 0)
+              this.props.dispatch({ type: "SET_REGISTER_SPONSOR" });
+            setTimeout(() => {
+              this.closeModal();
+              this.props.dispatch({ type: "CHANGE_USER_AUTH", payload: true });
+            }, 1000);
+          })
+          .catch((err) => {
+            this.setState({ toast: true, toastIsSuccess: false });
+          });
+      });
     } else {
       this.setState({ toast: true, toastIsSuccess: false });
     }
