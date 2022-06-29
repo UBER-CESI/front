@@ -1,44 +1,42 @@
 import { createContext, useContext, useReducer } from "react";
 import type { ReactNode } from "react";
 
-let restaurantsJSON = require("../restaurants.json");
 let userJSON = require("../user.json");
-let ordersJSON = require("../orders.json");
 let basketJSON = require("../basket.json");
 
 const defaultState = {
-  userAuth: true,
-  restaurants: restaurantsJSON,
   loginModal: false,
   registerModal: false,
   addressModal: false,
-  address: "264 Bd Godard, 33300 Bordeaux",
-  basket: basketJSON,
-  userInfo: {},
-  typeUser: "",
-  customerInfo: {},
-  restaurantInfo: {},
-  delivererInfo: {},
-  userInfos: userJSON,
   accountModals: {
     orders: false,
     profile: false,
     promotions: false,
     about: false,
   },
-  orders: ordersJSON,
+
+  userAuth: true,
+  userInfo: {},
+  typeUser: "",
+  customerInfo: {},
+  customerHistory: [],
+  restaurantInfo: {},
+  restaurantHistory: [],
+  delivererInfo: {},
+  delivererHistory: [],
+  userInfos: userJSON,
+
+  restaurants: [],
   selectedRestaurantId: 0,
-  menus: {
-    0: require("../restaurantMenus-0.json"),
-    1: require("../restaurantMenus-1.json"),
-    2: require("../restaurantMenus-2.json"),
-    3: require("../restaurantMenus-3.json"),
-  },
-  userType: {
-    client: true,
-    restaurant: false,
-    deliverer: false,
-  },
+  menus: [],
+
+  address: "264 Bd Godard, 33300 Bordeaux",
+
+  basket: basketJSON,
+  orders: [],
+  tip: 0,
+
+  registerSponsor: false,
 };
 
 export type ActionType =
@@ -52,14 +50,18 @@ export type ActionType =
   | "CHANGE_USER_INFO"
   | "CHANGE_TYPE_USER"
   | "CHANGE_CUSTOMER_INFO"
+  | "CHANGE_CUSTOMER_HISTORY"
   | "CHANGE_RESTAURANT_INFO"
+  | "CHANGE_RESTAURANT_HISTORY"
   | "CHANGE_DELIVERER_INFO"
+  | "CHANGE_DELIVERER_HISTORY"
   | "CHANGE_USER_INFOS"
   | "SET_ACCOUNT_MODALS"
   | "SET_ORDERS"
   | "SET_SELECTED_RESTAURANT_ID"
   | "SET_MENUS"
-  | "SET_USER_TYPE";
+  | "CHANGE_TIP"
+  | "SET_REGISTER_SPONSOR";
 
 export type ActionWithParamsType = {
   type: ActionType;
@@ -97,10 +99,16 @@ function moduleReducer(state: StateType, action: ActionWithParamsType) {
       return { ...state, typeUser: action.payload };
     case "CHANGE_CUSTOMER_INFO":
       return { ...state, customerInfo: action.payload };
+    case "CHANGE_CUSTOMER_HISTORY":
+      return { ...state, customerHistory: action.payload };
     case "CHANGE_RESTAURANT_INFO":
       return { ...state, restaurantInfo: action.payload };
+    case "CHANGE_RESTAURANT_HISTORY":
+      return { ...state, restaurantHistory: action.payload };
     case "CHANGE_DELIVERER_INFO":
       return { ...state, delivererInfo: action.payload };
+    case "CHANGE_DELIVERER_HISTORY":
+      return { ...state, delivererHistory: action.payload };
     case "CHANGE_USER_INFOS":
       return { ...state, userInfos: action.payload };
     case "SET_ACCOUNT_MODALS":
@@ -111,8 +119,10 @@ function moduleReducer(state: StateType, action: ActionWithParamsType) {
       return { ...state, selectedRestaurantId: action.payload };
     case "SET_MENUS":
       return { ...state, menus: action.payload };
-    case "SET_USER_TYPE":
-      return { ...state, userType: action.payload };
+    case "CHANGE_TIP":
+      return { ...state, tip: action.payload };
+    case "SET_REGISTER_SPONSOR":
+      return { ...state, registerSponsor: true };
     default:
       return state;
   }

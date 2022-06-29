@@ -16,6 +16,10 @@ export function getOrder(id: number) {
     return GET(orderSlashUrl + id);
 };
 
+export function getOrdersByCustomerId(custId: number) {
+    return GET(orderSlashUrl + "?byCustomerId=" + custId);
+};
+
 export function updateOrder(id: number, order: Order) {
     return POST(orderSlashUrl + id, order);
 };

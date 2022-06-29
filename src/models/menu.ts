@@ -1,10 +1,11 @@
 import { Item } from "./item";
 
 export interface Menu {
-    id: number;
+    _id: number;
+    __v: string;
     name: string;
     description: string;
     price: number;
-    restaurantId: string;
+    quantity?: number;
     items: Array<Item>;
 };

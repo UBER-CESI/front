@@ -83,75 +83,7 @@ class Orders extends React.Component<OrdersProps> {
             </IonTitle>
           </IonToolbar>
           <IonContent>
-            <IonAccordionGroup className="orders-list">
-              {this.props.state.orders.map((order: Order, i: number) => {
-                return (
-                  <IonAccordion value={order.status} key={i}>
-                    <IonItem slot="header">
-                      <>
-                        <IonAvatar slot="start">
-                          <img
-                            src="/images/restaurant_avatar.png"
-                            alt="restaurant avatar"
-                          />
-                        </IonAvatar>
-                        <IonLabel>
-                          <h2>{this.restaurantName(order.restaurantId)}</h2>
-                          <p>21/05/22 - 19h45</p>
-                          <p>{this.orderStatus(order.status)}</p>
-                        </IonLabel>
-                      </>
-                    </IonItem>
-                    <IonList slot="content">
-                      {order.items.map((item: Item, j: number) => {
-                        return (
-                          <IonItem key={j}>
-                            <IonLabel>
-                              <h2>{item.name}</h2>
-                              <p>{item.description}</p>
-                              {item.allergens.length > 0 && (
-                                <p>
-                                  Allergènes :{" "}
-                                  <ul>
-                                    {item.allergens.map(
-                                      (allergen: string, k: number) => {
-                                        return <li key={k}>{allergen}</li>;
-                                      }
-                                    )}
-                                  </ul>
-                                </p>
-                              )}
-                              {item.options.length > 0 && (
-                                <p>
-                                  Options :{" "}
-                                  <ul>
-                                    {item.options.map(
-                                      (option: Option, l: number) => {
-                                        return (
-                                          <li key={l}>
-                                            {option.name} -{" "}
-                                            {option.values.map(
-                                              (value: Value) => {
-                                                return value.value + " ";
-                                              }
-                                            )}
-                                          </li>
-                                        );
-                                      }
-                                    )}
-                                  </ul>
-                                </p>
-                              )}
-                              <p>{item.price}€</p>
-                            </IonLabel>
-                          </IonItem>
-                        );
-                      })}
-                    </IonList>
-                  </IonAccordion>
-                );
-              })}
-            </IonAccordionGroup>
+            <IonAccordionGroup className="orders-list"></IonAccordionGroup>
           </IonContent>
         </IonModal>
         <style>

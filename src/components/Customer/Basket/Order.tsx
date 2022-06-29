@@ -10,19 +10,7 @@ import {
 import { PayPalButtons } from "@paypal/react-paypal-js";
 import React from "react";
 import { Link } from "react-router-dom";
-import { Option } from "../../../models/itemOption";
-import { Value } from "../../../models/itemOptionValue";
-
-interface BasketItem {
-  id?: any;
-  name: string;
-  description: string;
-  allergens: Array<string>;
-  price: number;
-  quantity: number;
-  options: Array<Option>;
-  restaurantId: any;
-}
+import { createOrder } from "../../../services/orders";
 
 interface OrderProps {
   state: any;
@@ -38,60 +26,47 @@ class Order extends React.Component<OrderProps> {
 
   calculateTotal = () => {
     const { basket } = this.props.state;
-    let total = 0;
-    if (basket.items) {
-      basket.items.forEach((item: BasketItem) => {
-        total += item.price * item.quantity;
+    let total = 2;
+    total += +this.props.state.tip;
+    if (basket.menus) {
+      basket.menus.forEach((menu: any) => {
+        total += menu.price * menu.quantity;
       });
     }
     return Math.round(total * 100) / 100;
-  };
-
-  removeValuesCheck = () => {
-    let basket = JSON.parse(JSON.stringify(this.props.state.basket));
-    delete basket.restaurant_id;
-    delete basket.restaurant_name;
-    basket.items.forEach((item: BasketItem) => {
-      item.restaurantId = item.restaurantId.toString();
-      delete item.id;
-      item.options.forEach((option: Option) => {
-        option.values.forEach((value: Value) => {
-          delete value.checked;
-        });
-      });
-    });
-    return basket.items;
   };
 
   confirmOrder = () => {
     const { dispatch } = this.props;
 
     let order = {
-      customerId: "0",
-      restaurantId: "0",
-      delivererId: "0",
+      customerId: this.props.state.customerInfo._id,
+      restaurantId: this.props.state.basket.restaurant_id,
       address: this.props.state.address,
       totalPrice: this.calculateTotal(),
-      tipAmount: 0,
+      tipAmount: this.props.state.tip,
       status: "paid",
-      items: this.removeValuesCheck(),
+      menus: JSON.stringify(this.props.state.basket.menus),
     };
 
-    let newOrdersList = JSON.parse(JSON.stringify(this.props.state.orders));
-    newOrdersList.push(order);
+    createOrder(order).then((res: any) => {
+      console.log(res);
+      let newOrdersList = JSON.parse(JSON.stringify(this.props.state.orders));
+      newOrdersList.push(order);
 
-    dispatch({
-      type: "SET_ORDERS",
-      payload: newOrdersList,
-    });
-
-    setTimeout(() => {
       dispatch({
-        type: "SET_BASKET",
-        payload: {},
+        type: "SET_ORDERS",
+        payload: newOrdersList,
       });
-    }, 5000);
-    this.linkRef.click();
+
+      setTimeout(() => {
+        dispatch({
+          type: "SET_BASKET",
+          payload: {},
+        });
+      }, 5000);
+      this.linkRef.click();
+    });
   };
 
   render() {

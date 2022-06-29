@@ -1,13 +1,13 @@
-import { Item } from "./item";
+import { Menu } from "./menu";
 
 export interface Order {
-    id: number;
+    _id?: string;
     customerId: string;
-    delivererId: string;
+    delivererId?: string;
     restaurantId: string;
     address: string;
     totalPrice: number;
     tipAmount: number;
     status: string;
-    items: Array<Item>;
+    menus: string | Array<Menu>;
 };

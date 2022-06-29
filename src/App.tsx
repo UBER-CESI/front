@@ -52,20 +52,26 @@ import "./theme/global.css";
 
 import { useModule } from "./store/context";
 
-import { login } from "./services/loginRegister";
+import { login } from "./services/index";
 import { loginType } from "./models/loginRegister";
-import { getRestaurantList } from "./services/restaurant";
-import {setupNotifications} from "./services/notifications"
+import { getRestaurant, getRestaurantList } from "./services/restaurant";
+import { getCustomer } from "./services/customer";
+import { getDeliverer } from "./services/deliverer";
+import { setupNotifications } from "./services/notifications";
+import { buildUrl } from "./services";
+import { getOrderList } from "./services/orders";
+
 setupIonicReact();
-setupNotifications("http://127.0.0.1:3000/notifications")
+setupNotifications(buildUrl("notifications"));
+
 const App: React.FC = () => {
   const { state, dispatch } = useModule();
   const [loadingScreen, setLoadingScreen] = React.useState(true);
 
   useEffect(() => {
     let userLogin: loginType = {
-      email: "r@r.com",
-      password: "password",
+      email: "customer@customer.com",
+      password: "customer",
     };
     login(userLogin)
       .then((res) => {
@@ -75,28 +81,61 @@ const App: React.FC = () => {
         });
         dispatch({
           type: "CHANGE_TYPE_USER",
-          payload: res.typeUser,
+          payload: res.data.typeUser,
         });
-        getRestaurantList().then((restaurants) => {
-          console.log("restaurants", restaurants);
-        });
-        switch (res.typeUser) {
+        switch (res.data.typeUser) {
           case "customer":
-            console.log("customer");
-            break;
-          case "restaurant":
-            console.log("restaurant");
+            getCustomer(res.data._id)
+              .then((cust: any) => {
+                dispatch({
+                  type: "CHANGE_CUSTOMER_INFO",
+                  payload: cust.data,
+                });
+              })
+              .catch((err) => {
+                console.log(err);
+              });
             break;
           case "deliverer":
-            console.log("deliverer");
+            getDeliverer(res.data._id)
+              .then((deli: any) => {
+                dispatch({
+                  type: "CHANGE_DELIVERER_INFO",
+                  payload: deli.data,
+                });
+                getOrderList().then((orders: any) => {
+                  console.log(orders.data);
+                });
+              })
+              .catch((err) => {
+                console.log(err);
+              });
             break;
-          case "admin":
-            console.log("admin");
+          case "restaurant":
+            getRestaurant(res.data._id)
+              .then((rest: any) => {
+                dispatch({
+                  type: "CHANGE_RESTAURANT_INFO",
+                  payload: rest.data,
+                });
+              })
+              .catch((err) => {
+                console.log(err);
+              });
             break;
         }
+        getRestaurantList()
+          .then((restaurants: any) => {
+            console.log(restaurants);
+            dispatch({
+              type: "SET_RESTAURANTS",
+              payload: restaurants.data,
+            });
+          })
+          .catch((e) => console.log(e));
         dispatch({
           type: "CHANGE_USER_INFO",
-          payload: res,
+          payload: res.data,
         });
       })
       .catch((err) => {
@@ -217,7 +256,7 @@ const App: React.FC = () => {
                   <Route exact path="/basket">
                     <CustomerBasket state={state} dispatch={dispatch} />
                   </Route>
-                  <Route path="/account">
+                  <Route path="/customerAccount">
                     <CustomerAccount state={state} dispatch={dispatch} />
                   </Route>
                   <Route path="/restaurant/menu">

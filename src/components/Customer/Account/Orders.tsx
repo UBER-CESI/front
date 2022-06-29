@@ -8,22 +8,63 @@ import {
   IonItem,
   IonLabel,
   IonList,
+  IonListHeader,
   IonModal,
   IonTitle,
   IonToolbar,
 } from "@ionic/react";
 
 import { Order } from "../../../models/order";
-import { Item } from "../../../models/item";
-import { Option } from "../../../models/itemOption";
-import { Value } from "../../../models/itemOptionValue";
+import { getOrdersByCustomerId } from "../../../services/orders";
+import { getRestaurantMenu } from "../../../services/restaurant";
 
 interface OrdersProps {
   state: any;
   dispatch: any;
 }
 
-class Orders extends React.Component<OrdersProps> {
+interface IState {
+  orders: Array<Order>;
+}
+
+class Orders extends React.Component<OrdersProps, IState> {
+  constructor(props: OrdersProps) {
+    super(props);
+    this.state = {
+      orders: [],
+    };
+  }
+
+  componentDidMount = () => {
+    this.restrieveOrders();
+  };
+
+  restrieveOrders = async () => {
+    const { ordersData }: any = await getOrdersByCustomerId(
+      this.props.state.customerInfo._id
+    );
+    let orders = JSON.parse(JSON.stringify(ordersData.data));
+    console.log(orders.data);
+    let menus: any = [];
+    orders.forEach((order: any, orderIndex: number) => {
+      order.menus.forEach((menu: any, menuIndex: number) => {
+        getRestaurantMenu(menu).then((menuData: any) => {
+          let menuItem = JSON.parse(JSON.stringify(menuData.data));
+          menus.push(menuItem);
+          if (
+            orderIndex === orders.data.length - 1 &&
+            menuIndex === order.menus.length - 1
+          ) {
+            order.menus = menus;
+            this.setState({
+              orders: orders,
+            });
+          }
+        });
+      });
+    });
+  };
+
   closeModal = () => {
     let accountModals = {
       ...this.props.state.accountModals,
@@ -39,7 +80,7 @@ class Orders extends React.Component<OrdersProps> {
     let { restaurants } = this.props.state;
     let restaurant: any;
     restaurants.forEach((r: any) => {
-      if (r.id === +id) {
+      if (r._id === +id) {
         restaurant = r;
       }
     });
@@ -84,70 +125,38 @@ class Orders extends React.Component<OrdersProps> {
           </IonToolbar>
           <IonContent>
             <IonAccordionGroup className="orders-list">
-              {this.props.state.orders.map((order: Order, i: number) => {
+              {this.state.orders?.map((order: any, orderIndex: number) => {
                 return (
-                  <IonAccordion value={order.status} key={i}>
-                    <IonItem slot="header">
-                      <>
-                        <IonAvatar slot="start">
-                          <img
-                            src="/images/restaurant_avatar.png"
-                            alt="restaurant avatar"
-                          />
-                        </IonAvatar>
-                        <IonLabel>
-                          <h2>{this.restaurantName(order.restaurantId)}</h2>
-                          <p>21/05/22 - 19h45</p>
-                          <p>{this.orderStatus(order.status)}</p>
-                        </IonLabel>
-                      </>
-                    </IonItem>
-                    <IonList slot="content">
-                      {order.items.map((item: Item, j: number) => {
-                        return (
-                          <IonItem key={j}>
+                  <IonAccordion value={order.status} key={orderIndex}>
+                    <IonLabel>
+                      <h2>{this.restaurantName(order.restaurantId)}</h2>
+                      <p>{this.orderStatus(order.status)}</p>
+                    </IonLabel>
+
+                    {order.menus?.map((menu: any, menuIndex: number) => {
+                      return (
+                        <IonList slot="content" key={menuIndex}>
+                          <IonListHeader>
+                            <IonItem slot="header">
+                              <IonAvatar slot="start">
+                                <img
+                                  src="/images/restaurant_avatar.png"
+                                  alt="restaurant avatar"
+                                />
+                              </IonAvatar>
+                            </IonItem>
+                          </IonListHeader>
+                          <IonItem>
                             <IonLabel>
-                              <h2>{item.name}</h2>
-                              <p>{item.description}</p>
-                              {item.allergens.length > 0 && (
-                                <p>
-                                  Allergènes :{" "}
-                                  <ul>
-                                    {item.allergens.map(
-                                      (allergen: string, k: number) => {
-                                        return <li key={k}>{allergen}</li>;
-                                      }
-                                    )}
-                                  </ul>
-                                </p>
-                              )}
-                              {item.options.length > 0 && (
-                                <p>
-                                  Options :{" "}
-                                  <ul>
-                                    {item.options.map(
-                                      (option: Option, l: number) => {
-                                        return (
-                                          <li key={l}>
-                                            {option.name} -{" "}
-                                            {option.values.map(
-                                              (value: Value) => {
-                                                return value.value + " ";
-                                              }
-                                            )}
-                                          </li>
-                                        );
-                                      }
-                                    )}
-                                  </ul>
-                                </p>
-                              )}
-                              <p>{item.price}€</p>
+                              <h2>Nom : {menu.name}</h2>
+                              <p>Description : {menu.description}</p>
+                              <p>Prix total : {menu.totalPrice}€</p>
+                              <p>Dont pourboire : {menu.tipAmount}€</p>
                             </IonLabel>
                           </IonItem>
-                        );
-                      })}
-                    </IonList>
+                        </IonList>
+                      );
+                    })}
                   </IonAccordion>
                 );
               })}

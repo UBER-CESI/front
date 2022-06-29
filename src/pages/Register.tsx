@@ -21,6 +21,7 @@ interface IState {
   email: string;
   password: string;
   passwordConfirmation: string;
+  sponsorCode: string;
   toast: boolean;
   toastIsSuccess: boolean;
 }
@@ -34,6 +35,7 @@ class RegisterModal extends React.Component<RegisterModalProps, IState> {
       email: "",
       password: "",
       passwordConfirmation: "",
+      sponsorCode: "",
       toast: false,
       toastIsSuccess: false,
     };
@@ -47,9 +49,13 @@ class RegisterModal extends React.Component<RegisterModalProps, IState> {
       this.state.password.length > 9 &&
       this.state.password === this.state.passwordConfirmation &&
       this.state.firstName.length > 0 &&
-      this.state.lastName.length > 0
+      this.state.lastName.length > 0 &&
+      (this.state.sponsorCode.length === 0 ||
+        this.state.sponsorCode.slice(0, 10) === "CESI-EATS-")
     ) {
       this.setState({ toast: true, toastIsSuccess: true });
+      if (this.state.sponsorCode.length > 0)
+        this.props.dispatch({ type: "SET_REGISTER_SPONSOR" });
       setTimeout(() => {
         this.closeModal();
         this.props.dispatch({ type: "CHANGE_USER_AUTH", payload: true });
@@ -145,6 +151,14 @@ class RegisterModal extends React.Component<RegisterModalProps, IState> {
               value={this.state.passwordConfirmation}
               onIonChange={(e) => {
                 this.setState({ passwordConfirmation: e.detail.value! });
+              }}
+            />
+            <IonLabel>Code de parrainage</IonLabel>
+            <IonInput
+              placeholder="Code de parrainage"
+              value={this.state.sponsorCode}
+              onIonChange={(e) => {
+                this.setState({ sponsorCode: e.detail.value! });
               }}
             />
             <IonButton
