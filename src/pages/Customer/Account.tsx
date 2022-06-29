@@ -1,4 +1,5 @@
 import React from "react";
+import Cookies from "js-cookie";
 import {
   IonChip,
   IonContent,
@@ -62,6 +63,7 @@ class CustomerAccount extends React.Component<CustomerAccountProps> {
                 outline
                 onClick={() => {
                   logout();
+                  Cookies.remove("userData");
                   this.props.dispatch({
                     type: "CHANGE_USER_AUTH",
                     payload: false,
