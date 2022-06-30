@@ -59,7 +59,6 @@ import { getCustomer } from "./services/customer";
 import { getDeliverer } from "./services/deliverer";
 import { setupNotifications } from "./services/notifications";
 import { buildUrl } from "./services";
-import { getOrderList } from "./services/orders";
 
 setupIonicReact();
 setupNotifications(buildUrl("notifications"));
@@ -93,12 +92,6 @@ export function makeCalls(userData: any, state: any, dispatch: any) {
           dispatch({
             type: "CHANGE_DELIVERER_INFO",
             payload: deli.data,
-          });
-          getOrderList().then((orders: any) => {
-            dispatch({
-              type: "CHANGE_ALL_ORDERS",
-              payload: orders.data,
-            });
           });
         })
         .catch((err) => {

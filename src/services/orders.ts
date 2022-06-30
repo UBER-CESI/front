@@ -20,7 +20,11 @@ export function getOrdersByCustomerId(custId: number) {
     return GET(orderSlashUrl + "?byCustomerId=" + custId);
 };
 
-export function updateOrder(id: number, order: Order) {
+export function getOrdersByRestaurantId(restId: number) {
+    return GET(orderSlashUrl + "?byRestaurantId=" + restId);
+};
+
+export function updateOrder(id: string, order: Order) {
     return POST(orderSlashUrl + id, order);
 };
 

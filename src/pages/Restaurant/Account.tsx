@@ -1,3 +1,4 @@
+import Cookies from "js-cookie";
 import {
   IonPage,
   IonHeader,
@@ -11,6 +12,7 @@ import {
 import { personCircleOutline } from "ionicons/icons";
 import React from "react";
 import SettingsList from "../../components/Restaurant/Account/SettingsList";
+import { logout } from "../../services/index";
 
 interface RestaurantAccountProps {
   state: any;
@@ -55,12 +57,14 @@ class RestaurantAccount extends React.Component<RestaurantAccountProps> {
                 color="danger"
                 className="order-chip"
                 outline
-                onClick={() =>
+                onClick={() => {
+                  logout();
+                  Cookies.remove("userData");
                   this.props.dispatch({
                     type: "CHANGE_USER_AUTH",
                     payload: false,
-                  })
-                }
+                  });
+                }}
               >
                 <IonText>
                   <h5>Déconnexion</h5>

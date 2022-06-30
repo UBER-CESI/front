@@ -12,7 +12,7 @@ import {
   IonToast,
   IonToolbar,
 } from "@ionic/react";
-import { updateRestaurant } from "../../../services/restaurant";
+import { updateDeliverer } from "../../../services/deliverer";
 
 interface ProfileProps {
   state: any;
@@ -21,8 +21,7 @@ interface ProfileProps {
 
 interface IState {
   email: any;
-  name: any;
-  address: any;
+  nickname: any;
   phoneNumber: any;
   toast: boolean;
   toastIsSuccess: boolean;
@@ -33,8 +32,7 @@ class Profile extends React.Component<ProfileProps, IState> {
     super(props);
     this.state = {
       email: "",
-      name: "",
-      address: "",
+      nickname: "",
       phoneNumber: "",
       toast: false,
       toastIsSuccess: false,
@@ -43,13 +41,10 @@ class Profile extends React.Component<ProfileProps, IState> {
 
   componentDidMount = () => {
     this.setState({
-      email: this.props.state.restaurantInfo.email,
-      name: this.props.state.restaurantInfo.name,
-      phoneNumber: this.props.state.restaurantInfo.phoneNumber,
+      email: this.props.state.delivererInfo.email,
+      nickname: this.props.state.delivererInfo.nickname,
+      phoneNumber: this.props.state.delivererInfo.phoneNumber,
     });
-    this.props.state.restaurantInfo.address
-      ? this.setState({ address: this.props.state.restaurantInfo.address })
-      : this.setState({ address: "" });
   };
 
   closeModal = () => {
@@ -62,13 +57,10 @@ class Profile extends React.Component<ProfileProps, IState> {
       payload: accountModals,
     });
     this.setState({
-      email: this.props.state.restaurantInfo.email,
-      name: this.props.state.restaurantInfo.name,
-      phoneNumber: this.props.state.restaurantInfo.phoneNumber,
+      email: this.props.state.delivererInfo.email,
+      nickname: this.props.state.delivererInfo.nickname,
+      phoneNumber: this.props.state.delivererInfo.phoneNumber,
     });
-    this.props.state.restaurantInfo.address
-      ? this.setState({ address: this.props.state.restaurantInfo.address })
-      : this.setState({ address: "" });
   };
 
   verifyChanges = () => {
@@ -76,25 +68,22 @@ class Profile extends React.Component<ProfileProps, IState> {
       /^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*$/;
     if (
       this.state.email.match(validRegex) &&
-      this.state.name.length > 0 &&
-      this.state.phoneNumber.length === 10 &&
-      this.state.address.length > 0
+      this.state.nickname.length > 0 &&
+      this.state.phoneNumber.length === 10
     ) {
-      let updatedRestaurant = {
-        ...this.props.state.restaurantInfo,
+      let updatedDeliverer = {
+        ...this.props.state.delivererInfo,
         email: this.state.email,
-        name: this.state.name,
-        address: this.state.address,
+        nickname: this.state.nickname,
         phoneNumber: this.state.phoneNumber,
       };
-      updateRestaurant(this.props.state.restaurantInfo._id, updatedRestaurant)
+      updateDeliverer(this.props.state.delivererInfo._id, updatedDeliverer)
         .then(() => {
           this.props.dispatch({
             type: "CHANGE_DELIVERER_INFO",
             payload: {
               email: this.state.email,
-              name: this.state.name,
-              address: this.state.address,
+              nickname: this.state.nickname,
               phoneNumber: this.state.phoneNumber,
             },
           });
@@ -164,7 +153,7 @@ class Profile extends React.Component<ProfileProps, IState> {
             />
             <IonList lines="full">
               <IonListHeader lines="full">
-                <IonLabel>Modifier mon restaurant</IonLabel>
+                <IonLabel>Modifier mon profil</IonLabel>
               </IonListHeader>
               <IonItem>
                 <IonLabel position="stacked">Email</IonLabel>
@@ -178,13 +167,13 @@ class Profile extends React.Component<ProfileProps, IState> {
                 />
               </IonItem>
               <IonItem>
-                <IonLabel position="stacked">Nom</IonLabel>
+                <IonLabel position="stacked">Pseudo</IonLabel>
                 <IonInput
-                  value={this.state.name}
+                  value={this.state.nickname}
                   disabled={false}
                   type="text"
                   onIonChange={(e) => {
-                    this.setState({ name: e.detail.value });
+                    this.setState({ nickname: e.detail.value });
                   }}
                 />
               </IonItem>
@@ -196,17 +185,6 @@ class Profile extends React.Component<ProfileProps, IState> {
                   type="tel"
                   onIonChange={(e) => {
                     this.setState({ phoneNumber: e.detail.value });
-                  }}
-                />
-              </IonItem>
-              <IonItem>
-                <IonLabel position="stacked">Adresse</IonLabel>
-                <IonInput
-                  value={this.state.address}
-                  disabled={false}
-                  type="text"
-                  onIonChange={(e) => {
-                    this.setState({ address: e.detail.value });
                   }}
                 />
               </IonItem>

@@ -21,8 +21,11 @@
               "multiple": true,
               "required": true,
               "values": [
-                null,
-                null
+                {
+                  "value": "ketchup",
+                  "priceOffset": 0,
+                  "checked": true
+                }
               ]
             },
             {
