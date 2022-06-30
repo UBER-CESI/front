@@ -73,6 +73,15 @@ export function makeCalls(userData: any, state: any, dispatch: any) {
             type: "CHANGE_CUSTOMER_INFO",
             payload: cust.data,
           });
+
+          getRestaurantList()
+            .then((restaurants: any) => {
+              dispatch({
+                type: "SET_RESTAURANTS",
+                payload: restaurants.data,
+              });
+            })
+            .catch((e) => console.log(e));
         })
         .catch((err) => {
           console.error(err);
@@ -112,15 +121,6 @@ export function makeCalls(userData: any, state: any, dispatch: any) {
       dispatch({ type: "CHANGE_USER_AUTH", payload: false });
       break;
   }
-
-  getRestaurantList()
-    .then((restaurants: any) => {
-      dispatch({
-        type: "SET_RESTAURANTS",
-        payload: restaurants.data,
-      });
-    })
-    .catch((e) => console.log(e));
 }
 
 const App: React.FC = () => {

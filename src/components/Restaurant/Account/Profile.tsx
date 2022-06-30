@@ -12,6 +12,7 @@ import {
   IonToast,
   IonToolbar,
 } from "@ionic/react";
+import { updateRestaurant } from "../../../services/restaurant";
 
 interface ProfileProps {
   state: any;
@@ -20,9 +21,8 @@ interface ProfileProps {
 
 interface IState {
   email: any;
-  nickname: any;
-  firstname: any;
-  lastname: any;
+  name: any;
+  address: any;
   phoneNumber: any;
   toast: boolean;
   toastIsSuccess: boolean;
@@ -33,9 +33,8 @@ class Profile extends React.Component<ProfileProps, IState> {
     super(props);
     this.state = {
       email: "",
-      nickname: "",
-      firstname: "",
-      lastname: "",
+      name: "",
+      address: "",
       phoneNumber: "",
       toast: false,
       toastIsSuccess: false,
@@ -44,12 +43,13 @@ class Profile extends React.Component<ProfileProps, IState> {
 
   componentDidMount = () => {
     this.setState({
-      email: this.props.state.userInfos.email,
-      nickname: this.props.state.userInfos.nickname,
-      firstname: this.props.state.userInfos.firstname,
-      lastname: this.props.state.userInfos.lastname,
-      phoneNumber: this.props.state.userInfos.phoneNumber,
+      email: this.props.state.restaurantInfo.email,
+      name: this.props.state.restaurantInfo.name,
+      phoneNumber: this.props.state.restaurantInfo.phoneNumber,
     });
+    this.props.state.restaurantInfo.address
+      ? this.setState({ address: this.props.state.restaurantInfo.address })
+      : this.setState({ address: "" });
   };
 
   closeModal = () => {
@@ -62,12 +62,13 @@ class Profile extends React.Component<ProfileProps, IState> {
       payload: accountModals,
     });
     this.setState({
-      email: this.props.state.userInfos.email,
-      nickname: this.props.state.userInfos.nickname,
-      firstname: this.props.state.userInfos.firstname,
-      lastname: this.props.state.userInfos.lastname,
-      phoneNumber: this.props.state.userInfos.phoneNumber,
+      email: this.props.state.restaurantInfo.email,
+      name: this.props.state.restaurantInfo.name,
+      phoneNumber: this.props.state.restaurantInfo.phoneNumber,
     });
+    this.props.state.restaurantInfo.address
+      ? this.setState({ address: this.props.state.restaurantInfo.address })
+      : this.setState({ address: "" });
   };
 
   verifyChanges = () => {
@@ -75,34 +76,49 @@ class Profile extends React.Component<ProfileProps, IState> {
       /^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*$/;
     if (
       this.state.email.match(validRegex) &&
-      this.state.firstname.length > 0 &&
-      this.state.lastname.length > 0 &&
-      this.state.phoneNumber.length === 10
+      this.state.name.length > 0 &&
+      this.state.phoneNumber.length === 10 &&
+      this.state.address.length > 0
     ) {
-      this.props.dispatch({
-        type: "CHANGE_USER_INFOS",
-        payload: {
-          email: this.state.email,
-          nickname: this.state.nickname,
-          firstname: this.state.firstname,
-          lastname: this.state.lastname,
-          phoneNumber: this.state.phoneNumber,
-        },
-      });
-      this.setState({
-        toast: true,
-        toastIsSuccess: true,
-      });
-      setTimeout(() => {
-        let accountModals = {
-          ...this.props.state.accountModals,
-          profile: false,
-        };
-        this.props.dispatch({
-          type: "SET_ACCOUNT_MODALS",
-          payload: accountModals,
+      let updatedRestaurant = {
+        ...this.props.state.restaurantInfo,
+        email: this.state.email,
+        name: this.state.name,
+        address: this.state.address,
+        phoneNumber: this.state.phoneNumber,
+      };
+      updateRestaurant(this.props.state.restaurantInfo._id, updatedRestaurant)
+        .then(() => {
+          this.props.dispatch({
+            type: "CHANGE_CUSTOMER_INFO",
+            payload: {
+              email: this.state.email,
+              name: this.state.name,
+              address: this.state.address,
+              phoneNumber: this.state.phoneNumber,
+            },
+          });
+          this.setState({
+            toast: true,
+            toastIsSuccess: true,
+          });
+          setTimeout(() => {
+            let accountModals = {
+              ...this.props.state.accountModals,
+              profile: false,
+            };
+            this.props.dispatch({
+              type: "SET_ACCOUNT_MODALS",
+              payload: accountModals,
+            });
+          }, 1000);
+        })
+        .catch((err) => {
+          this.setState({
+            toast: true,
+            toastIsSuccess: false,
+          });
         });
-      }, 1000);
     } else {
       this.setState({
         toast: true,
@@ -148,18 +164,8 @@ class Profile extends React.Component<ProfileProps, IState> {
             />
             <IonList lines="full">
               <IonListHeader lines="full">
-                <IonLabel>Modifier mon profil</IonLabel>
+                <IonLabel>Modifier mon restaurant</IonLabel>
               </IonListHeader>
-              <IonItem>
-                <IonLabel position="stacked">Pseudo</IonLabel>
-                <IonInput
-                  value={this.state.nickname}
-                  disabled={false}
-                  onIonChange={(e) => {
-                    this.setState({ nickname: e.detail.value });
-                  }}
-                />
-              </IonItem>
               <IonItem>
                 <IonLabel position="stacked">Email</IonLabel>
                 <IonInput
@@ -172,24 +178,13 @@ class Profile extends React.Component<ProfileProps, IState> {
                 />
               </IonItem>
               <IonItem>
-                <IonLabel position="stacked">Prénom</IonLabel>
-                <IonInput
-                  value={this.state.firstname}
-                  disabled={false}
-                  type="text"
-                  onIonChange={(e) => {
-                    this.setState({ firstname: e.detail.value });
-                  }}
-                />
-              </IonItem>
-              <IonItem>
                 <IonLabel position="stacked">Nom</IonLabel>
                 <IonInput
-                  value={this.state.lastname}
+                  value={this.state.name}
                   disabled={false}
                   type="text"
                   onIonChange={(e) => {
-                    this.setState({ lastname: e.detail.value });
+                    this.setState({ name: e.detail.value });
                   }}
                 />
               </IonItem>
@@ -201,6 +196,17 @@ class Profile extends React.Component<ProfileProps, IState> {
                   type="tel"
                   onIonChange={(e) => {
                     this.setState({ phoneNumber: e.detail.value });
+                  }}
+                />
+              </IonItem>
+              <IonItem>
+                <IonLabel position="stacked">Adresse</IonLabel>
+                <IonInput
+                  value={this.state.address}
+                  disabled={false}
+                  type="text"
+                  onIonChange={(e) => {
+                    this.setState({ address: e.detail.value });
                   }}
                 />
               </IonItem>
