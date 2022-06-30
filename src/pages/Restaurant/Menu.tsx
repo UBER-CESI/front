@@ -13,16 +13,25 @@ import {
   IonItemDivider,
   IonList,
   IonPage,
+  IonRefresher,
+  IonRefresherContent,
   IonRow,
   IonText,
   IonTextarea,
   IonTitle,
   IonToast,
   IonToolbar,
+  RefresherEventDetail,
 } from "@ionic/react";
 import React from "react";
 import { checkmarkDoneOutline, closeOutline } from "ionicons/icons";
 import {
+  createRestaurantMenu,
+  updateRestaurantMenu,
+  deleteRestaurantMenu,
+  createRestaurantItem,
+  updateRestaurantItem,
+  deleteRestaurantItem,
   getRestaurantItem,
   getRestaurantMenuList,
 } from "../../services/restaurant";
@@ -71,8 +80,12 @@ class RestaurantMenu extends React.Component<RestaurantMenuProps, IState> {
   }
 
   componentDidMount = () => {
-    getRestaurantMenuList(this.props.state.restaurantInfo._id).then(
-      (menusData: any) => {
+    this.getMenus();
+  };
+
+  getMenus = (event?: CustomEvent<RefresherEventDetail>) => {
+    getRestaurantMenuList(this.props.state.restaurantInfo._id)
+      .then((menusData: any) => {
         let menus = JSON.parse(JSON.stringify(menusData.data));
         let items = menus.map((menu: Menu) => {
           return menu.items;
@@ -96,8 +109,12 @@ class RestaurantMenu extends React.Component<RestaurantMenuProps, IState> {
             });
           });
         });
-      }
-    );
+      })
+      .then(() => {
+        if (event) {
+          event.detail.complete();
+        }
+      });
   };
 
   deleteMenu = (menuIndex: number) => {
@@ -122,7 +139,70 @@ class RestaurantMenu extends React.Component<RestaurantMenuProps, IState> {
 
   submitChanges = () => {
     let menus = JSON.parse(JSON.stringify(this.state.menus));
-    let previousMenus = JSON.parse(JSON.stringify(this.state.previousMenus));
+    const restId: string = this.props.state.restaurantInfo._id;
+    let error: boolean = false;
+
+    this.state.itemsToDelete.forEach((itemId: string) => {
+      deleteRestaurantItem(itemId).catch(() => {
+        this.setState({
+          showToast: true,
+          toastError: true,
+        });
+        error = true;
+      });
+    });
+    this.state.itemsToCreate.forEach((item: Item) => {
+      createRestaurantItem(restId, item).catch(() => {
+        this.setState({
+          showToast: true,
+          toastError: true,
+        });
+        error = true;
+      });
+    });
+    this.state.itemsToUpdate.forEach((item: any) => {
+      updateRestaurantItem(item._id, item).catch(() => {
+        this.setState({
+          showToast: true,
+          toastError: true,
+        });
+        error = true;
+      });
+    });
+    this.state.menusToDelete.forEach((menuId: string) => {
+      deleteRestaurantMenu(restId, menuId).catch(() => {
+        this.setState({
+          showToast: true,
+          toastError: true,
+        });
+        error = true;
+      });
+    });
+    this.state.menusToCreate.forEach((menu: Menu) => {
+      createRestaurantMenu(restId, menu).catch(() => {
+        this.setState({
+          showToast: true,
+          toastError: true,
+        });
+        error = true;
+      });
+    });
+    this.state.menusToUpdate.forEach((menu: any) => {
+      updateRestaurantMenu(restId, menu._id, menu).catch(() => {
+        this.setState({
+          showToast: true,
+          toastError: true,
+        });
+        error = true;
+      });
+    });
+
+    if (!error) {
+      this.setState({
+        showToast: true,
+        toastError: false,
+      });
+    }
 
     this.setState({ previousMenus: menus });
   };
@@ -296,6 +376,9 @@ class RestaurantMenu extends React.Component<RestaurantMenuProps, IState> {
             </IonToolbar>
           </IonHeader>
           <IonContent fullscreen>
+            <IonRefresher slot="fixed" onIonRefresh={this.getMenus}>
+              <IonRefresherContent className="refresh-content" />
+            </IonRefresher>
             {this.state.menus.length > 0 &&
               this.state.menus?.map((menu: Menu, menuIndex: number) => (
                 <IonCard key={menuIndex}>
@@ -631,8 +714,8 @@ class RestaurantMenu extends React.Component<RestaurantMenuProps, IState> {
               onDidDismiss={() => this.setState({ showToast: false })}
               message={
                 this.state.toastError
-                  ? "Votre panier ne peut contenir des plats que du même restaurant !"
-                  : "Ajouté au panier !"
+                  ? "Erreur lors de la modification, vérifiez que vous avez bien rempli tous les champs !"
+                  : "Les changements ont bien été enregistrés !"
               }
               duration={2000}
               color={this.state.toastError ? "danger" : "success"}
@@ -678,6 +761,9 @@ class RestaurantMenu extends React.Component<RestaurantMenuProps, IState> {
             .item-allergens {
               width: 100%;
               height: 20px;
+            }
+            .refresh-content {
+              background-color: #f5f5f5;
             }
           `}
         </style>

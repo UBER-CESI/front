@@ -13,23 +13,23 @@ export function createRestaurant(restaurant: Restaurant) {
     return PUT(restaurantUrl + "register", restaurant);
 };
 
-export function getRestaurant(id: number) {
+export function getRestaurant(id: string) {
     return GET(restaurantUrl + id);
 };
 
-export function updateRestaurant(id: number, restaurant: Restaurant) {
+export function updateRestaurant(id: string, restaurant: Restaurant) {
     return POST(restaurantUrl + id, restaurant);
 };
 
-export function deleteRestaurant(id: number) {
+export function deleteRestaurant(id: string) {
     return DELETE(restaurantUrl + id);
 };
 
-export function getRestaurantStats(id: number) {
+export function getRestaurantStats(id: string) {
     return GET(restaurantUrl + id + "/stats");
 };
 
-export function getRestaurantHistory(id: number) {
+export function getRestaurantHistory(id: string) {
     return GET(restaurantUrl + id + "/history");
 };
 
@@ -37,7 +37,7 @@ export function getRestaurantMenuList(restId: number) {
     return GET("menu/?byRestaurantId=" + restId);
 };
 
-export function createRestaurantMenu(restId: number, menu: Menu) {
+export function createRestaurantMenu(restId: string, menu: Menu) {
     return PUT(restaurantUrl + restId + "/menu", menu);
 };
 
@@ -45,30 +45,30 @@ export function getRestaurantMenu(menuId: string) {
     return GET("menu/" + menuId);
 };
 
-export function updateRestaurantMenu(restId: number, menuId: number, menu: Menu) {
+export function updateRestaurantMenu(restId: string, menuId: string, menu: Menu) {
     return POST(restaurantUrl + restId + "/menu/" + menuId, menu);
 };
 
-export function deleteRestaurantMenu(restId: number, menuId: number) {
+export function deleteRestaurantMenu(restId: string, menuId: string) {
     return DELETE(restaurantUrl + restId + "/menu/" + menuId);
 };
 
-export function getRestaurantItemList(restId: number) {
+export function getRestaurantItemList(restId: string) {
     return GET(restaurantUrl + restId + "/item");
 };
 
-export function createRestaurantItem(restId: number, item: Item) {
+export function createRestaurantItem(restId: string, item: Item) {
     return PUT(restaurantUrl + restId + "/item", item);
 };
 
-export function getRestaurantItem(itemId: number) {
+export function getRestaurantItem(itemId: string) {
     return GET("item/" + itemId);
 };
 
-export function updateRestaurantItem(itemId: number, item: Item) {
+export function updateRestaurantItem(itemId: string, item: Item) {
     return POST("item/" + itemId, item);
 };
 
-export function deleteRestaurantItem(itemId: number) {
+export function deleteRestaurantItem(itemId: string) {
     return DELETE("item/" + itemId);
 };
