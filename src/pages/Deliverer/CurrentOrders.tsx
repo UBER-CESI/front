@@ -131,7 +131,7 @@ class DelivererCurrentOrders extends React.Component<
             </IonRefresher>
             <IonList>
               <IonListHeader>
-                <h2>Commandes en livraison</h2>
+                <h2>Commandes en cours</h2>
               </IonListHeader>
               <IonAccordionGroup>
                 {this.state.currentOrders?.map(

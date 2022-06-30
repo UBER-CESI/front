@@ -129,7 +129,7 @@ class DelivererAvailableOrders extends React.Component<
             </IonRefresher>
             <IonList>
               <IonListHeader>
-                <h2>Commandes à livrer</h2>
+                <h2>Commandes disponibles</h2>
               </IonListHeader>
               <IonAccordionGroup>
                 {this.state.availableOrders?.map(
