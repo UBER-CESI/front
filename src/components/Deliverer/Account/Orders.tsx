@@ -15,7 +15,7 @@ import {
 } from "@ionic/react";
 
 import { Order } from "../../../models/order";
-import { getOrderList } from "../../../services/orders";
+import { getOrdersByDelivererId } from "../../../services/orders";
 
 interface OrdersProps {
   state: any;
@@ -39,7 +39,9 @@ class Orders extends React.Component<OrdersProps, IState> {
   };
 
   restrieveOrders = async () => {
-    const { ordersData }: any = await getOrderList();
+    const { ordersData }: any = await getOrdersByDelivererId(
+      this.props.state.delivererInfo._id
+    );
     if (ordersData) {
       let orders = JSON.parse(JSON.stringify(ordersData.data));
       this.setState({

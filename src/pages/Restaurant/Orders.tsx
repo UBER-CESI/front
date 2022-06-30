@@ -117,7 +117,6 @@ class RestaurantOrders extends React.Component<RestaurantOrdersProps, IState> {
   };
 
   render() {
-    console.log(this.state);
     return (
       <>
         <IonPage>
