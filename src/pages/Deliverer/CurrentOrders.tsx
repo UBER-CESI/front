@@ -148,7 +148,7 @@ class DelivererCurrentOrders extends React.Component<
                         this.orderStatusChange(orderIndex);
                       }}
                     >
-                      Prendre en charge
+                      Confirmer la livraison
                     </IonButton>
                   </IonLabel>
                   <IonList>
