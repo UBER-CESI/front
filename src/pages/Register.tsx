@@ -65,13 +65,13 @@ class RegisterModal extends React.Component<RegisterModalProps, IState> {
       (this.state.sponsorCode.length === 0 ||
         this.state.sponsorCode.slice(0, 10) === "CESI-EATS-")
     ) {
-      let user = {
-        firstName: this.state.firstName,
-        lastName: this.state.lastName,
+      let user: any = {
+        firstname: this.state.firstName,
+        lastname: this.state.lastName,
         email: this.state.email,
-        password: this.state.password,
+        pwd: this.state.password,
         nickname: this.state.nickname,
-        phone: this.state.phoneNumber,
+        phoneNumber: this.state.phoneNumber,
         typeUser: this.state.typeUser,
       };
       register(user).then((res) => {
@@ -93,6 +93,7 @@ class RegisterModal extends React.Component<RegisterModalProps, IState> {
               payload: res.data.typeUser,
             });
             makeCalls(res.data, this.props.state, this.props.dispatch);
+            this.context.navigate("/");
             if (this.state.sponsorCode.length > 0)
               this.props.dispatch({ type: "SET_REGISTER_SPONSOR" });
             setTimeout(() => {

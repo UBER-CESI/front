@@ -10,6 +10,7 @@ import {
   IonTitle,
   IonToast,
   IonToolbar,
+  NavContext,
 } from "@ionic/react";
 import { Clipboard } from "@capacitor/clipboard";
 import Cookies from "universal-cookie";
@@ -30,6 +31,7 @@ interface IState {
 }
 
 class LogInModal extends React.Component<LogInModalProps, IState> {
+  static contextType = NavContext;
   constructor(props: LogInModalProps) {
     super(props);
     this.state = {
@@ -63,6 +65,7 @@ class LogInModal extends React.Component<LogInModalProps, IState> {
             payload: res.data.typeUser,
           });
           makeCalls(res.data, this.props.state, this.props.dispatch);
+          this.context.navigate("/");
           setTimeout(() => {
             this.closeModal();
             this.props.dispatch({ type: "CHANGE_USER_AUTH", payload: true });

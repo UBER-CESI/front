@@ -49,12 +49,7 @@ interface IState {
   menus: Array<Menu> | any;
   previousMenus: Array<Menu> | any;
 
-  menusToCreate: Array<Menu>;
-  menusToUpdate: Array<Menu>;
-  menusToDelete: Array<string>;
-  itemsToCreate: Array<Item>;
-  itemsToUpdate: Array<Item>;
-  itemsToDelete: Array<string>;
+  menusToDelete: Array<Menu> | any;
 
   showToast: boolean;
   toastError: boolean;
@@ -67,12 +62,7 @@ class RestaurantMenu extends React.Component<RestaurantMenuProps, IState> {
       menus: [],
       previousMenus: [],
 
-      menusToCreate: [],
-      menusToUpdate: [],
       menusToDelete: [],
-      itemsToCreate: [],
-      itemsToUpdate: [],
-      itemsToDelete: [],
 
       showToast: false,
       toastError: false,
@@ -119,7 +109,6 @@ class RestaurantMenu extends React.Component<RestaurantMenuProps, IState> {
 
   deleteMenu = (menuIndex: number) => {
     let menus = JSON.parse(JSON.stringify(this.state.menus));
-    menus[menuIndex]._id && this.addMenuToDelete(menus[menuIndex]._id);
     menus.splice(menuIndex, 1);
     this.setState({ menus: menus });
   };
@@ -134,7 +123,6 @@ class RestaurantMenu extends React.Component<RestaurantMenuProps, IState> {
     };
     menus.push(newMenu);
     this.setState({ menus: menus });
-    this.addMenuToCreate(newMenu);
   };
 
   submitChanges = () => {
@@ -142,58 +130,68 @@ class RestaurantMenu extends React.Component<RestaurantMenuProps, IState> {
     const restId: string = this.props.state.restaurantInfo._id;
     let error: boolean = false;
 
-    this.state.itemsToDelete.forEach((itemId: string) => {
-      deleteRestaurantItem(itemId).catch(() => {
-        this.setState({
-          showToast: true,
-          toastError: true,
+    menus.forEach((menu: any) => {
+      if (!menu._id) {
+        let items: Array<string> = [];
+        menu.items.forEach((item: Item) => {
+          createRestaurantItem(item).then((it: any) => {
+            items.push(it.data._id);
+            if (items.length === menu.items.length) {
+              menu.items = items;
+              menu.restaurantId = restId;
+              createRestaurantMenu(restId, menu).then((m: any) => {
+                this.getMenus();
+              });
+            }
+          });
         });
-        error = true;
-      });
+      } else {
+        let items: Array<string> = [];
+        menu.items.forEach((item: Item) => {
+          if (!item._id) {
+            createRestaurantItem(item).then((it: any) => {
+              items.push(it.data._id);
+              if (items.length === menu.items.length) {
+                menu.items = items;
+                updateRestaurantMenu(menu._id, menu).then((m: any) => {
+                  this.getMenus();
+                });
+              }
+            });
+          } else {
+            updateRestaurantItem(item._id, item).then((it: any) => {
+              items.push(it.data._id);
+              if (items.length === menu.items.length) {
+                menu.items = items;
+                updateRestaurantMenu(menu._id, menu).then((m: any) => {
+                  this.getMenus();
+                });
+              }
+            });
+          }
+        });
+      }
     });
-    this.state.itemsToCreate.forEach((item: Item) => {
-      createRestaurantItem(restId, item).catch(() => {
-        this.setState({
-          showToast: true,
-          toastError: true,
-        });
-        error = true;
+
+    let menusToDelete: Array<Menu> = [];
+    this.state.previousMenus.forEach((menu: Menu) => {
+      let found: boolean = false;
+      menus.forEach((m: Menu) => {
+        if (menu._id === m._id) {
+          found = true;
+        }
       });
+      if (!found) {
+        menusToDelete.push(menu);
+      }
     });
-    this.state.itemsToUpdate.forEach((item: any) => {
-      updateRestaurantItem(item._id, item).catch(() => {
-        this.setState({
-          showToast: true,
-          toastError: true,
+    menusToDelete.forEach((menu: any) => {
+      menu.items.forEach((item: any) => {
+        deleteRestaurantItem(item._id).then((it: any) => {
+          deleteRestaurantMenu(menu._id).then((m: any) => {
+            this.getMenus();
+          });
         });
-        error = true;
-      });
-    });
-    this.state.menusToDelete.forEach((menuId: string) => {
-      deleteRestaurantMenu(restId, menuId).catch(() => {
-        this.setState({
-          showToast: true,
-          toastError: true,
-        });
-        error = true;
-      });
-    });
-    this.state.menusToCreate.forEach((menu: Menu) => {
-      createRestaurantMenu(restId, menu).catch(() => {
-        this.setState({
-          showToast: true,
-          toastError: true,
-        });
-        error = true;
-      });
-    });
-    this.state.menusToUpdate.forEach((menu: any) => {
-      updateRestaurantMenu(restId, menu._id, menu).catch(() => {
-        this.setState({
-          showToast: true,
-          toastError: true,
-        });
-        error = true;
       });
     });
 
@@ -204,57 +202,13 @@ class RestaurantMenu extends React.Component<RestaurantMenuProps, IState> {
       });
     }
 
-    this.setState({ previousMenus: menus });
+    this.setState({ previousMenus: menus, menusToDelete: [] });
   };
 
   discardChanges = () => {
     this.setState({
       menus: this.state.previousMenus,
-      menusToCreate: [],
-      menusToUpdate: [],
-      menusToDelete: [],
-      itemsToCreate: [],
-      itemsToUpdate: [],
-      itemsToDelete: [],
     });
-  };
-
-  addMenuToCreate = (menu: Menu) => {
-    let menusToCreate = JSON.parse(JSON.stringify(this.state.menusToCreate));
-    menusToCreate.push(menu);
-    this.setState({ menusToCreate: menusToCreate });
-  };
-
-  addMenuToUpdate = (menu: Menu) => {
-    let menusToUpdate = JSON.parse(JSON.stringify(this.state.menusToUpdate));
-    menusToUpdate.push(menu);
-    this.setState({ menusToUpdate: menusToUpdate });
-  };
-
-  addMenuToDelete = (menuId: string) => {
-    let menusToDelete = JSON.parse(JSON.stringify(this.state.menusToDelete));
-    menusToDelete.push(menuId);
-    this.setState({ menusToDelete: menusToDelete });
-  };
-
-  addItemToCreate = (item: Item) => {
-    let itemsToCreate = JSON.parse(JSON.stringify(this.state.itemsToCreate));
-    itemsToCreate.push(item);
-    this.setState({ itemsToCreate: itemsToCreate });
-  };
-
-  addItemToUpdate = (menuIndex: number, itemIndex: number) => {
-    let menus = JSON.parse(JSON.stringify(this.state.menus));
-    let itemsToUpdate = JSON.parse(JSON.stringify(this.state.itemsToUpdate));
-    let item = menus[menuIndex].items[itemIndex];
-    itemsToUpdate.push(item);
-    this.setState({ itemsToUpdate: itemsToUpdate });
-  };
-
-  addItemToDelete = (itemId: string) => {
-    let itemsToDelete = JSON.parse(JSON.stringify(this.state.itemsToDelete));
-    itemsToDelete.push(itemId);
-    this.setState({ itemsToDelete: itemsToDelete });
   };
 
   getAllergens = (allergens: Array<string>) => {
@@ -273,20 +227,16 @@ class RestaurantMenu extends React.Component<RestaurantMenuProps, IState> {
     let menus = JSON.parse(JSON.stringify(this.state.menus));
     menus[menuIndex].items[itemIndex].allergens = newValue.split(", ");
     this.setState({ menus: menus });
-    this.addItemToUpdate(menuIndex, itemIndex);
   };
 
   addOption = (menuIndex: number, itemIndex: number) => {
     let menus = JSON.parse(JSON.stringify(this.state.menus));
     let option = {
       name: "",
-      multiple: true,
-      required: false,
       values: [],
     };
     menus[menuIndex].items[itemIndex].options.push(option);
     this.setState({ menus: menus });
-    this.addItemToUpdate(menuIndex, itemIndex);
   };
 
   deleteOption = (
@@ -297,7 +247,6 @@ class RestaurantMenu extends React.Component<RestaurantMenuProps, IState> {
     let menus = JSON.parse(JSON.stringify(this.state.menus));
     menus[menuIndex].items[itemIndex].options.splice(optionIndex, 1);
     this.setState({ menus: menus });
-    this.addItemToUpdate(menuIndex, itemIndex);
   };
 
   deleteValue = (
@@ -312,7 +261,6 @@ class RestaurantMenu extends React.Component<RestaurantMenuProps, IState> {
       1
     );
     this.setState({ menus: menus });
-    this.addItemToUpdate(menuIndex, itemIndex);
   };
 
   changeValue = (
@@ -328,19 +276,17 @@ class RestaurantMenu extends React.Component<RestaurantMenuProps, IState> {
         valueIndex
       ].priceOffset = newPrice;
       this.setState({ menus: menus });
-      this.addItemToUpdate(menuIndex, itemIndex);
     }
   };
 
   addValue = (menuIndex: number, itemIndex: number, optionIndex: number) => {
     let menus = JSON.parse(JSON.stringify(this.state.menus));
     let value = {
-      name: "",
+      value: "",
       priceOffset: 0,
     };
     menus[menuIndex].items[itemIndex].options[optionIndex].values.push(value);
     this.setState({ menus: menus });
-    this.addItemToUpdate(menuIndex, itemIndex);
   };
 
   addItem = (menuIndex: number) => {
@@ -353,15 +299,11 @@ class RestaurantMenu extends React.Component<RestaurantMenuProps, IState> {
       options: [],
     };
     menus[menuIndex].items.push(item);
-    this.addMenuToUpdate(menus[menuIndex]);
-    this.addItemToCreate(item);
     this.setState({ menus: menus });
   };
 
   deleteItem = (menuIndex: number, itemIndex: number) => {
     let menus = JSON.parse(JSON.stringify(this.state.menus));
-    menus[menuIndex].items[itemIndex]._id &&
-      this.addItemToDelete(menus[menuIndex].items[itemIndex]._id);
     menus[menuIndex].items.splice(itemIndex, 1);
     this.setState({ menus: menus });
   };
@@ -402,21 +344,35 @@ class RestaurantMenu extends React.Component<RestaurantMenuProps, IState> {
                           );
                           menus[menuIndex].name = e.detail.value;
                           this.setState({ menus: menus });
-                          this.addMenuToUpdate(menus[menuIndex]);
+                        }}
+                      />
+                      <IonTextarea
+                        value={menu.description}
+                        className="menu-name"
+                        placeholder="Description"
+                        rows={1}
+                        onIonChange={(e: any) => {
+                          let menus = JSON.parse(
+                            JSON.stringify(this.state.menus)
+                          );
+                          menus[menuIndex].description = e.detail.value;
+                          this.setState({ menus: menus });
                         }}
                       />
                       <IonInput
                         value={menu.price}
                         type="number"
+                        min={0}
                         className="menu-price"
                         placeholder="Prix du menu"
                         onIonChange={(e: any) => {
-                          let menus = JSON.parse(
-                            JSON.stringify(this.state.menus)
-                          );
-                          menus[menuIndex].price = e.detail.value;
-                          this.setState({ menus: menus });
-                          this.addMenuToUpdate(menus[menuIndex]);
+                          if (e.detail.value >= 0) {
+                            let menus = JSON.parse(
+                              JSON.stringify(this.state.menus)
+                            );
+                            menus[menuIndex].price = e.detail.value;
+                            this.setState({ menus: menus });
+                          }
                         }}
                       />
                       <IonText className="menu-price-currency">€</IonText>
@@ -438,7 +394,6 @@ class RestaurantMenu extends React.Component<RestaurantMenuProps, IState> {
                               menus[menuIndex].items[itemIndex].name =
                                 e.detail.value;
                               this.setState({ menus: menus });
-                              this.addItemToUpdate(menuIndex, itemIndex);
                             }}
                           />
                           <IonButton
@@ -465,7 +420,6 @@ class RestaurantMenu extends React.Component<RestaurantMenuProps, IState> {
                               menus[menuIndex].items[itemIndex].description =
                                 e.detail.value;
                               this.setState({ menus: menus });
-                              this.addItemToUpdate(menuIndex, itemIndex);
                             }}
                           />
                         </IonText>
@@ -484,7 +438,6 @@ class RestaurantMenu extends React.Component<RestaurantMenuProps, IState> {
                                 itemIndex,
                                 e.detail.value
                               );
-                              this.addItemToUpdate(menuIndex, itemIndex);
                             }}
                           />
                         </IonText>
@@ -496,7 +449,7 @@ class RestaurantMenu extends React.Component<RestaurantMenuProps, IState> {
                           </h2>
                         </IonText>
                         <IonText className="options">
-                          {item.options.map(
+                          {item.options?.map(
                             (option: Option, optionIndex: number) => (
                               <div key={optionIndex}>
                                 <IonText>
@@ -515,10 +468,6 @@ class RestaurantMenu extends React.Component<RestaurantMenuProps, IState> {
                                         ].options[optionIndex].name =
                                           e.detail.value;
                                         this.setState({ menus: menus });
-                                        this.addItemToUpdate(
-                                          menuIndex,
-                                          itemIndex
-                                        );
                                       }}
                                     />
                                     <IonButton
@@ -530,10 +479,6 @@ class RestaurantMenu extends React.Component<RestaurantMenuProps, IState> {
                                           itemIndex,
                                           optionIndex
                                         );
-                                        this.addItemToUpdate(
-                                          menuIndex,
-                                          itemIndex
-                                        );
                                       }}
                                     >
                                       X
@@ -541,7 +486,7 @@ class RestaurantMenu extends React.Component<RestaurantMenuProps, IState> {
                                   </h2>
                                 </IonText>
                                 <IonList lines="none" inset={false}>
-                                  {option.values.map(
+                                  {option.values?.map(
                                     (value: Value, valueIndex: number) => (
                                       <IonItem key={valueIndex}>
                                         <IonText slot="start">
@@ -554,10 +499,6 @@ class RestaurantMenu extends React.Component<RestaurantMenuProps, IState> {
                                                 itemIndex,
                                                 optionIndex,
                                                 valueIndex
-                                              );
-                                              this.addItemToUpdate(
-                                                menuIndex,
-                                                itemIndex
                                               );
                                             }}
                                           >
@@ -580,10 +521,6 @@ class RestaurantMenu extends React.Component<RestaurantMenuProps, IState> {
                                                 valueIndex
                                               ].value = e.detail.value;
                                               this.setState({ menus: menus });
-                                              this.addItemToUpdate(
-                                                menuIndex,
-                                                itemIndex
-                                              );
                                             }}
                                           />
                                         </IonText>
@@ -598,10 +535,6 @@ class RestaurantMenu extends React.Component<RestaurantMenuProps, IState> {
                                                 optionIndex,
                                                 valueIndex,
                                                 value.priceOffset + 1
-                                              );
-                                              this.addItemToUpdate(
-                                                menuIndex,
-                                                itemIndex
                                               );
                                             }}
                                           >
@@ -623,10 +556,6 @@ class RestaurantMenu extends React.Component<RestaurantMenuProps, IState> {
                                                 valueIndex,
                                                 value.priceOffset - 1
                                               );
-                                              this.addItemToUpdate(
-                                                menuIndex,
-                                                itemIndex
-                                              );
                                             }}
                                           >
                                             -
@@ -645,7 +574,6 @@ class RestaurantMenu extends React.Component<RestaurantMenuProps, IState> {
                                       itemIndex,
                                       optionIndex
                                     );
-                                    this.addItemToUpdate(menuIndex, itemIndex);
                                   }}
                                 >
                                   Ajouter une valeur
@@ -748,7 +676,7 @@ class RestaurantMenu extends React.Component<RestaurantMenuProps, IState> {
             .menu-price-currency {
               position: absolute;
               left: 80px;
-              top: 60px;
+              top: 110px;
             }
             .item-name {
               width: 100%;

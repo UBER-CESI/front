@@ -38,27 +38,27 @@ export function getRestaurantMenuList(restId: number) {
 };
 
 export function createRestaurantMenu(restId: string, menu: Menu) {
-    return PUT(restaurantUrl + restId + "/menu", menu);
+    return PUT("menu/?byRestaurantId=" + restId, menu);
 };
 
 export function getRestaurantMenu(menuId: string) {
     return GET("menu/" + menuId);
 };
 
-export function updateRestaurantMenu(restId: string, menuId: string, menu: Menu) {
-    return POST(restaurantUrl + restId + "/menu/" + menuId, menu);
+export function updateRestaurantMenu(menuId: string, menu: Menu) {
+    return POST("menu/" + menuId, menu);
 };
 
-export function deleteRestaurantMenu(restId: string, menuId: string) {
-    return DELETE(restaurantUrl + restId + "/menu/" + menuId);
+export function deleteRestaurantMenu(menuId: string) {
+    return DELETE("menu/" + menuId);
 };
 
 export function getRestaurantItemList(restId: string) {
     return GET(restaurantUrl + restId + "/item");
 };
 
-export function createRestaurantItem(restId: string, item: Item) {
-    return PUT(restaurantUrl + restId + "/item", item);
+export function createRestaurantItem(item: Item) {
+    return PUT("item", item);
 };
 
 export function getRestaurantItem(itemId: string) {

@@ -45,7 +45,7 @@ class CustomerBasket extends React.Component<CustomerBasketProps> {
     }
     if (quantity <= 0) {
       let newBasket = JSON.parse(JSON.stringify(this.props.state.basket));
-      delete newBasket.menus[menuIndex];
+      newBasket.menus.splice(menuIndex, 1);
       dispatch({
         type: "SET_BASKET",
         payload: newBasket,
@@ -66,6 +66,7 @@ class CustomerBasket extends React.Component<CustomerBasketProps> {
       total += menu.price * menu.quantity;
     });
     total += +this.props.state.tip;
+    if (this.props.state.registerSponsor) total = total * 0.9;
     return Math.round(total * 100) / 100;
   };
 
@@ -259,6 +260,11 @@ class CustomerBasket extends React.Component<CustomerBasketProps> {
                 <IonText>
                   <h2>Total : {this.calculateTotal() + 2}€</h2>
                 </IonText>
+                {this.props.state.registerSponsor && (
+                  <IonText>
+                    <h2>Promotion de 10% appliquée avec le code promo</h2>
+                  </IonText>
+                )}
                 <IonChip color="primary" className="order-chip" outline>
                   <IonText>
                     <Link to="/order" className="homepage-link">

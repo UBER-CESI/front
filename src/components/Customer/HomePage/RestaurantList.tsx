@@ -33,6 +33,8 @@ class RestaurantList extends React.Component<RestaurantListProps> {
                 <IonText>
                   <h1>{restaurant.name}</h1>
                   <p>Livraison : 2€</p>
+                  <p>Adresse : {restaurant.address}</p>
+                  <p>Téléphone : {restaurant.phoneNumber}</p>
                 </IonText>
               </IonCardContent>
             </IonCard>

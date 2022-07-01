@@ -10,8 +10,6 @@ import {
   IonToast,
   IonList,
   IonListHeader,
-  IonAccordion,
-  IonAccordionGroup,
   IonLabel,
   IonItem,
   IonButton,
@@ -131,16 +129,15 @@ class DelivererCurrentOrders extends React.Component<
             </IonRefresher>
             <IonList>
               <IonListHeader>
-                <h2>Commandes en cours</h2>
+                <h2>Commandes en livraison</h2>
               </IonListHeader>
-              <IonAccordionGroup>
-                {this.state.currentOrders?.map(
+              <IonItem>
+                {this.state.currentOrders.map(
                   (order: any, orderIndex: number) => {
                     return (
-                      <IonAccordion value={order.status} key={orderIndex}>
+                      <>
                         <IonLabel>
                           <h2>{this.restaurantName(order.restaurantId)}</h2>
-                          <p>{order.address}</p>
                           <p>{order.totalPrice}</p>
                           <IonButton
                             slot="end"
@@ -149,7 +146,7 @@ class DelivererCurrentOrders extends React.Component<
                               this.orderStatusChange(orderIndex);
                             }}
                           >
-                            Commande à récupérer
+                            Confirmer la livraison
                           </IonButton>
                         </IonLabel>
                         <IonList>
@@ -187,17 +184,19 @@ class DelivererCurrentOrders extends React.Component<
                                                         valueIndex: number
                                                       ) => {
                                                         return (
-                                                          <span
-                                                            key={valueIndex}
-                                                          >
-                                                            {value.value}
-                                                            {valueIndex <
-                                                            option.values
-                                                              .length -
-                                                              1
-                                                              ? ", "
-                                                              : ""}
-                                                          </span>
+                                                          value && (
+                                                            <span
+                                                              key={valueIndex}
+                                                            >
+                                                              {value.value}
+                                                              {valueIndex <
+                                                              option.values
+                                                                .length -
+                                                                1
+                                                                ? ", "
+                                                                : ""}
+                                                            </span>
+                                                          )
                                                         );
                                                       }
                                                     )}
@@ -215,11 +214,11 @@ class DelivererCurrentOrders extends React.Component<
                             );
                           })}
                         </IonList>
-                      </IonAccordion>
+                      </>
                     );
                   }
                 )}
-              </IonAccordionGroup>
+              </IonItem>
             </IonList>
             <IonToast
               isOpen={this.state.showToast}

@@ -58,7 +58,7 @@ import { getRestaurant, getRestaurantList } from "./services/restaurant";
 import { getCustomer } from "./services/customer";
 import { getDeliverer } from "./services/deliverer";
 import { setupNotifications } from "./services/notifications";
-import { buildUrl } from "./services";
+import { buildUrl, logout } from "./services";
 
 setupIonicReact();
 setupNotifications(buildUrl("notifications"));
@@ -84,6 +84,12 @@ export function makeCalls(userData: any, state: any, dispatch: any) {
         })
         .catch((err) => {
           console.error(err);
+          logout();
+          Cookies.remove("userData");
+          dispatch({
+            type: "CHANGE_USER_AUTH",
+            payload: false,
+          });
         });
       break;
     case "deliverer":
@@ -96,6 +102,12 @@ export function makeCalls(userData: any, state: any, dispatch: any) {
         })
         .catch((err) => {
           console.error(err);
+          logout();
+          Cookies.remove("userData");
+          dispatch({
+            type: "CHANGE_USER_AUTH",
+            payload: false,
+          });
         });
       break;
     case "restaurant":
@@ -108,6 +120,12 @@ export function makeCalls(userData: any, state: any, dispatch: any) {
         })
         .catch((err) => {
           console.error(err);
+          logout();
+          Cookies.remove("userData");
+          dispatch({
+            type: "CHANGE_USER_AUTH",
+            payload: false,
+          });
         });
       break;
     default:
