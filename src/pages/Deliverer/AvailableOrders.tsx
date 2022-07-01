@@ -13,11 +13,11 @@ import {
   IonLabel,
   IonItem,
   IonButton,
+  IonText,
 } from "@ionic/react";
 import { closeOutline, checkmarkDoneOutline } from "ionicons/icons";
 import React from "react";
 import { Item } from "../../models/item";
-import { Value } from "../../models/itemOptionValue";
 import { Order } from "../../models/order";
 import { getOrderList, updateOrder } from "../../services/orders";
 
@@ -56,6 +56,13 @@ class DelivererAvailableOrders extends React.Component<
         let availableOrders = orders.filter(
           (order: Order) => order.status === "prepared" && !order.delivererId
         );
+        availableOrders.forEach((order: any) => {
+          let orderMenus: any = [];
+          order.menus.forEach((menu: any) => {
+            orderMenus.push(JSON.parse(order.menus)[0]);
+          });
+          order.menus = orderMenus;
+        });
         this.setState({
           availableOrders: availableOrders,
         });
@@ -96,7 +103,7 @@ class DelivererAvailableOrders extends React.Component<
     let { restaurants } = this.props.state;
     let restaurant: any;
     restaurants.forEach((r: any) => {
-      if (r._id === +id) {
+      if (r._id === id) {
         restaurant = r;
       }
     });
@@ -125,99 +132,55 @@ class DelivererAvailableOrders extends React.Component<
             <IonRefresher slot="fixed" onIonRefresh={this.getOrders}>
               <IonRefresherContent className="refresh-content" />
             </IonRefresher>
-            <IonList>
-              <IonListHeader>
-                <h2>Commandes à accepter</h2>
-              </IonListHeader>
-              <IonItem>
-                {this.state.availableOrders.map(
-                  (order: any, orderIndex: number) => {
-                    return (
-                      <>
-                        <IonLabel>
-                          <h2>{this.restaurantName(order.restaurantId)}</h2>
-                          <p>{order.totalPrice}</p>
-                          <IonButton
-                            slot="end"
-                            size="small"
-                            onClick={() => {
-                              this.orderStatusChange(orderIndex);
-                            }}
-                          >
-                            Prendre en charge
-                          </IonButton>
-                        </IonLabel>
-                        <IonList>
-                          {order.menus?.map((menu: any, menuIndex: number) => {
-                            return (
-                              <>
-                                <IonListHeader key={menuIndex}>
-                                  <IonItem>
+            <IonText>
+              <h2>Commandes à accepter</h2>
+            </IonText>
+            {this.state.availableOrders.map(
+              (order: any, orderIndex: number) => {
+                return (
+                  <div key={orderIndex}>
+                    <IonLabel>
+                      <h2>{this.restaurantName(order.restaurantId)}</h2>
+                      <p>Prix : {order.totalPrice}€</p>
+                      <IonButton
+                        slot="end"
+                        size="small"
+                        onClick={() => {
+                          this.orderStatusChange(orderIndex);
+                        }}
+                      >
+                        Prendre en charge
+                      </IonButton>
+                    </IonLabel>
+                    <IonList>
+                      {order.menus.map((menu: any, menuIndex: number) => {
+                        return (
+                          <div key={menuIndex}>
+                            <IonListHeader>
+                              <IonLabel>
+                                <h2>{menu.name}</h2>
+                              </IonLabel>
+                            </IonListHeader>
+                            {menu.items?.map(
+                              (item: Item, itemIndex: number) => {
+                                return (
+                                  <IonItem key={itemIndex}>
                                     <IonLabel>
-                                      <h2>{menu.name}</h2>
+                                      <h2>{item.name}</h2>
+                                      <p>{item.description}</p>
                                     </IonLabel>
                                   </IonItem>
-                                </IonListHeader>
-                                {menu.items?.map(
-                                  (item: Item, itemIndex: number) => {
-                                    return (
-                                      <IonItem key={itemIndex}>
-                                        <IonLabel>
-                                          <h2>{item.name}</h2>
-                                          <p>{item.description}</p>
-                                        </IonLabel>
-                                        {item.options?.map(
-                                          (
-                                            option: any,
-                                            optionIndex: number
-                                          ) => {
-                                            return (
-                                              <IonItem key={optionIndex}>
-                                                <IonLabel>
-                                                  <h2>{option.name}</h2>
-                                                  <p>
-                                                    {option.values.map(
-                                                      (
-                                                        value: Value,
-                                                        valueIndex: number
-                                                      ) => {
-                                                        return (
-                                                          value && (
-                                                            <span
-                                                              key={valueIndex}
-                                                            >
-                                                              {value.value}
-                                                              {valueIndex <
-                                                              option.values
-                                                                .length -
-                                                                1
-                                                                ? ", "
-                                                                : ""}
-                                                            </span>
-                                                          )
-                                                        );
-                                                      }
-                                                    )}
-                                                  </p>
-                                                </IonLabel>
-                                              </IonItem>
-                                            );
-                                          }
-                                        )}
-                                      </IonItem>
-                                    );
-                                  }
-                                )}
-                              </>
-                            );
-                          })}
-                        </IonList>
-                      </>
-                    );
-                  }
-                )}
-              </IonItem>
-            </IonList>
+                                );
+                              }
+                            )}
+                          </div>
+                        );
+                      })}
+                    </IonList>
+                  </div>
+                );
+              }
+            )}
             <IonToast
               isOpen={this.state.showToast}
               onDidDismiss={() => this.setState({ showToast: false })}

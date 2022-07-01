@@ -64,6 +64,14 @@ setupIonicReact();
 setupNotifications(buildUrl("notifications"));
 
 export function makeCalls(userData: any, state: any, dispatch: any) {
+  getRestaurantList()
+    .then((restaurants: any) => {
+      dispatch({
+        type: "SET_RESTAURANTS",
+        payload: restaurants.data,
+      });
+    })
+    .catch((e) => console.log(e));
   switch (userData.typeUser) {
     case "customer":
       getCustomer(userData._id)
@@ -72,15 +80,6 @@ export function makeCalls(userData: any, state: any, dispatch: any) {
             type: "CHANGE_CUSTOMER_INFO",
             payload: cust.data,
           });
-
-          getRestaurantList()
-            .then((restaurants: any) => {
-              dispatch({
-                type: "SET_RESTAURANTS",
-                payload: restaurants.data,
-              });
-            })
-            .catch((e) => console.log(e));
         })
         .catch((err) => {
           console.error(err);
