@@ -1,6 +1,6 @@
 import axios from 'axios';
 
-const apiUrl = "https://ubercesi.sleepycat.date/";
+const apiUrl = "https://ubermarcus.sleepycat.date/";
 
 export function buildUrl(url: string) {
     return apiUrl + url;

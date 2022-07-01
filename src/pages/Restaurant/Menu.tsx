@@ -690,9 +690,6 @@ class RestaurantMenu extends React.Component<RestaurantMenuProps, IState> {
               width: 100%;
               height: 20px;
             }
-            .refresh-content {
-              background-color: #f5f5f5;
-            }
           `}
         </style>
       </>
