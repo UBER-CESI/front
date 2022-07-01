@@ -1,7 +1,5 @@
 import React from "react";
 import {
-  IonAccordion,
-  IonAccordionGroup,
   IonAvatar,
   IonButton,
   IonContent,
@@ -38,16 +36,24 @@ class Orders extends React.Component<OrdersProps, IState> {
     this.restrieveOrders();
   };
 
-  restrieveOrders = async () => {
-    const { ordersData }: any = await getOrdersByRestaurantId(
-      this.props.state.restaurantInfo._id
+  restrieveOrders = () => {
+    getOrdersByRestaurantId(this.props.state.delivererInfo._id).then(
+      (ordersData: any) => {
+        if (ordersData) {
+          let orders = JSON.parse(JSON.stringify(ordersData.data));
+          orders.forEach((order: any) => {
+            let orderMenus: any = [];
+            order.menus.forEach((menu: any) => {
+              orderMenus.push(JSON.parse(menu)[0]);
+            });
+            order.menus = orderMenus;
+          });
+          this.setState({
+            orders: orders,
+          });
+        }
+      }
     );
-    if (ordersData) {
-      let orders = JSON.parse(JSON.stringify(ordersData.data));
-      this.setState({
-        orders: orders,
-      });
-    }
   };
 
   closeModal = () => {
@@ -59,6 +65,17 @@ class Orders extends React.Component<OrdersProps, IState> {
       type: "SET_ACCOUNT_MODALS",
       payload: accountModals,
     });
+  };
+
+  restaurantName = (id: string) => {
+    let { restaurants } = this.props.state;
+    let restaurant: any;
+    restaurants.forEach((r: any) => {
+      if (r._id === id) {
+        restaurant = r;
+      }
+    });
+    return restaurant.name;
   };
 
   orderStatus = (status: string) => {
@@ -77,6 +94,7 @@ class Orders extends React.Component<OrdersProps, IState> {
   };
 
   render() {
+    console.log(this.state);
     return (
       <>
         <IonModal
@@ -98,42 +116,40 @@ class Orders extends React.Component<OrdersProps, IState> {
             </IonTitle>
           </IonToolbar>
           <IonContent>
-            <IonAccordionGroup className="orders-list">
-              {this.state.orders?.map((order: any, orderIndex: number) => {
-                return (
-                  <IonAccordion value={order.status} key={orderIndex}>
-                    <IonLabel>
-                      <h2>{this.props.state.restaurantInfo.name}</h2>
-                      <p>{this.orderStatus(order.status)}</p>
-                    </IonLabel>
+            {this.state.orders?.map((order: any, orderIndex: number) => {
+              return (
+                <div key={orderIndex}>
+                  <IonLabel>
+                    <h2>{this.restaurantName(order.restaurantId)}</h2>
+                    <p>{this.orderStatus(order.status)}</p>
+                  </IonLabel>
 
-                    {order.menus?.map((menu: any, menuIndex: number) => {
-                      return (
-                        <IonList slot="content" key={menuIndex}>
-                          <IonListHeader>
-                            <IonItem slot="header">
-                              <IonAvatar slot="start">
-                                <img
-                                  src="/images/restaurant_avatar.png"
-                                  alt="restaurant avatar"
-                                />
-                              </IonAvatar>
-                            </IonItem>
-                          </IonListHeader>
-                          <IonItem>
-                            <IonLabel>
-                              <h2>Nom : {menu.name}</h2>
-                              <p>Description : {menu.description}</p>
-                              <p>Prix total : {menu.totalPrice}€</p>
-                            </IonLabel>
+                  {order.menus?.map((menu: any, menuIndex: number) => {
+                    return (
+                      <IonList slot="content" key={menuIndex}>
+                        <IonListHeader>
+                          <IonItem slot="header">
+                            <IonAvatar slot="start">
+                              <img
+                                src="/images/restaurant_avatar.png"
+                                alt="restaurant avatar"
+                              />
+                            </IonAvatar>
                           </IonItem>
-                        </IonList>
-                      );
-                    })}
-                  </IonAccordion>
-                );
-              })}
-            </IonAccordionGroup>
+                        </IonListHeader>
+                        <IonItem>
+                          <IonLabel>
+                            <h2>Nom : {menu.name}</h2>
+                            <p>Description : {menu.description}</p>
+                            <p>Prix total : {menu.totalPrice}€</p>
+                          </IonLabel>
+                        </IonItem>
+                      </IonList>
+                    );
+                  })}
+                </div>
+              );
+            })}
           </IonContent>
         </IonModal>
         <style>
