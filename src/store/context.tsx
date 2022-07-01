@@ -1,9 +1,6 @@
 import { createContext, useContext, useReducer } from "react";
 import type { ReactNode } from "react";
 
-let userJSON = require("../user.json");
-let basketJSON = require("../basket.json");
-
 const defaultState = {
   loginModal: false,
   registerModal: false,
@@ -24,7 +21,6 @@ const defaultState = {
   restaurantHistory: [],
   delivererInfo: {},
   delivererHistory: [],
-  userInfos: userJSON,
 
   allOrders: [],
 
@@ -34,7 +30,7 @@ const defaultState = {
 
   address: "264 Bd Godard, 33300 Bordeaux",
 
-  basket: basketJSON,
+  basket: {},
   orders: [],
   tip: 0,
 

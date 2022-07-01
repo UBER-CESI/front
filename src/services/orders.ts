@@ -16,11 +16,19 @@ export function getOrder(id: number) {
     return GET(orderSlashUrl + id);
 };
 
-export function getOrdersByCustomerId(custId: number) {
+export function getOrdersByCustomerId(custId: string) {
     return GET(orderSlashUrl + "?byCustomerId=" + custId);
 };
 
-export function updateOrder(id: number, order: Order) {
+export function getOrdersByDelivererId(deliId: string) {
+    return GET(orderSlashUrl + "?byDelivererId=" + deliId);
+};
+
+export function getOrdersByRestaurantId(restId: string) {
+    return GET(orderSlashUrl + "?byRestaurantId=" + restId);
+};
+
+export function updateOrder(id: string, order: Order) {
     return POST(orderSlashUrl + id, order);
 };
 

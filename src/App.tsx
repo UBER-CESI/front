@@ -58,13 +58,20 @@ import { getRestaurant, getRestaurantList } from "./services/restaurant";
 import { getCustomer } from "./services/customer";
 import { getDeliverer } from "./services/deliverer";
 import { setupNotifications } from "./services/notifications";
-import { buildUrl } from "./services";
-import { getOrderList } from "./services/orders";
+import { buildUrl, logout } from "./services";
 
 setupIonicReact();
 setupNotifications(buildUrl("notifications"));
 
 export function makeCalls(userData: any, state: any, dispatch: any) {
+  getRestaurantList()
+    .then((restaurants: any) => {
+      dispatch({
+        type: "SET_RESTAURANTS",
+        payload: restaurants.data,
+      });
+    })
+    .catch((e) => console.log(e));
   switch (userData.typeUser) {
     case "customer":
       getCustomer(userData._id)
@@ -76,6 +83,12 @@ export function makeCalls(userData: any, state: any, dispatch: any) {
         })
         .catch((err) => {
           console.error(err);
+          logout();
+          Cookies.remove("userData");
+          dispatch({
+            type: "CHANGE_USER_AUTH",
+            payload: false,
+          });
         });
       break;
     case "deliverer":
@@ -85,15 +98,15 @@ export function makeCalls(userData: any, state: any, dispatch: any) {
             type: "CHANGE_DELIVERER_INFO",
             payload: deli.data,
           });
-          getOrderList().then((orders: any) => {
-            dispatch({
-              type: "CHANGE_ALL_ORDERS",
-              payload: orders.data,
-            });
-          });
         })
         .catch((err) => {
           console.error(err);
+          logout();
+          Cookies.remove("userData");
+          dispatch({
+            type: "CHANGE_USER_AUTH",
+            payload: false,
+          });
         });
       break;
     case "restaurant":
@@ -106,18 +119,18 @@ export function makeCalls(userData: any, state: any, dispatch: any) {
         })
         .catch((err) => {
           console.error(err);
+          logout();
+          Cookies.remove("userData");
+          dispatch({
+            type: "CHANGE_USER_AUTH",
+            payload: false,
+          });
         });
       break;
+    default:
+      dispatch({ type: "CHANGE_USER_AUTH", payload: false });
+      break;
   }
-
-  getRestaurantList()
-    .then((restaurants: any) => {
-      dispatch({
-        type: "SET_RESTAURANTS",
-        payload: restaurants.data,
-      });
-    })
-    .catch((e) => console.log(e));
 }
 
 const App: React.FC = () => {
@@ -129,6 +142,7 @@ const App: React.FC = () => {
     if (userData) {
       userData = JSON.parse(userData);
       dispatch({ type: "CHANGE_USER_INFO", payload: userData });
+      dispatch({ type: "CHANGE_TYPE_USER", payload: userData.typeUser });
       dispatch({ type: "CHANGE_USER_AUTH", payload: true });
 
       makeCalls(userData, state, dispatch);

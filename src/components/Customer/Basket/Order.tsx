@@ -6,10 +6,10 @@ import {
   IonBackButton,
   IonContent,
   IonText,
+  NavContext,
 } from "@ionic/react";
 import { PayPalButtons } from "@paypal/react-paypal-js";
 import React from "react";
-import { Link } from "react-router-dom";
 import { createOrder } from "../../../services/orders";
 
 interface OrderProps {
@@ -18,12 +18,7 @@ interface OrderProps {
 }
 
 class Order extends React.Component<OrderProps> {
-  linkRef: any;
-  constructor(props: OrderProps) {
-    super(props);
-    this.linkRef = React.createRef();
-  }
-
+  static contextType = NavContext;
   calculateTotal = () => {
     const { basket } = this.props.state;
     let total = 2;
@@ -50,7 +45,7 @@ class Order extends React.Component<OrderProps> {
     };
 
     createOrder(order).then((res: any) => {
-      console.log(res);
+      this.context.navigate("/account");
       let newOrdersList = JSON.parse(JSON.stringify(this.props.state.orders));
       newOrdersList.push(order);
 
@@ -65,7 +60,6 @@ class Order extends React.Component<OrderProps> {
           payload: {},
         });
       }, 5000);
-      this.linkRef.click();
     });
   };
 
@@ -82,11 +76,6 @@ class Order extends React.Component<OrderProps> {
             </IonToolbar>
           </IonHeader>
           <IonContent className="ion-text-center">
-            <Link
-              ref={(link) => (this.linkRef = link)}
-              to="/account/orders"
-              className="hidden-redirect"
-            />
             <IonText>
               <h2 className="total-payout">Total : {this.calculateTotal()}€</h2>
             </IonText>

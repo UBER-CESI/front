@@ -20,6 +20,7 @@ class SettingsList extends React.Component<SettingsListProps> {
       payload: accountModals,
     });
   };
+
   render() {
     return (
       <>
@@ -36,7 +37,7 @@ class SettingsList extends React.Component<SettingsListProps> {
               this.openModal("profile");
             }}
           >
-            <IonText>Modifier mon restaurant</IonText>
+            <IonText>Modifier mon profil</IonText>
           </IonItem>
           <IonItem
             onClick={() => {

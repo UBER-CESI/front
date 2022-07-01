@@ -15,7 +15,7 @@ import {
 } from "@ionic/react";
 
 import { Order } from "../../../models/order";
-import { getOrdersByCustomerId } from "../../../services/orders";
+import { getOrdersByDelivererId } from "../../../services/orders";
 
 interface OrdersProps {
   state: any;
@@ -39,8 +39,8 @@ class Orders extends React.Component<OrdersProps, IState> {
   };
 
   restrieveOrders = async () => {
-    const { ordersData }: any = await getOrdersByCustomerId(
-      this.props.state.customerInfo._id
+    const { ordersData }: any = await getOrdersByDelivererId(
+      this.props.state.delivererInfo._id
     );
     if (ordersData) {
       let orders = JSON.parse(JSON.stringify(ordersData.data));
@@ -48,17 +48,6 @@ class Orders extends React.Component<OrdersProps, IState> {
         orders: orders,
       });
     }
-  };
-
-  closeModal = () => {
-    let accountModals = {
-      ...this.props.state.accountModals,
-      orders: false,
-    };
-    this.props.dispatch({
-      type: "SET_ACCOUNT_MODALS",
-      payload: accountModals,
-    });
   };
 
   restaurantName = (id: string) => {
@@ -70,6 +59,17 @@ class Orders extends React.Component<OrdersProps, IState> {
       }
     });
     return restaurant.name;
+  };
+
+  closeModal = () => {
+    let accountModals = {
+      ...this.props.state.accountModals,
+      orders: false,
+    };
+    this.props.dispatch({
+      type: "SET_ACCOUNT_MODALS",
+      payload: accountModals,
+    });
   };
 
   orderStatus = (status: string) => {
@@ -136,7 +136,7 @@ class Orders extends React.Component<OrdersProps, IState> {
                               <h2>Nom : {menu.name}</h2>
                               <p>Description : {menu.description}</p>
                               <p>Prix total : {menu.totalPrice}€</p>
-                              <p>Dont pourboire : {menu.tipAmount}€</p>
+                              <p>Adresse : {menu.address}</p>
                             </IonLabel>
                           </IonItem>
                         </IonList>

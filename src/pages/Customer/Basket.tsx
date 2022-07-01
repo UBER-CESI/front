@@ -27,15 +27,15 @@ interface CustomerBasketProps {
 }
 
 class CustomerBasket extends React.Component<CustomerBasketProps> {
-  changeMenuQuantity = (menu: any, quantity: number) => {
+  changeMenuQuantity = (quantity: number, menuIndex: number) => {
     const { dispatch } = this.props;
     if (quantity > 0 && quantity <= 10) {
       dispatch({
         type: "SET_BASKET",
         payload: {
           ...this.props.state.basket,
-          menus: this.props.state.basket.menus.map((m: any) => {
-            if (m._id === menu._id) {
+          menus: this.props.state.basket.menus.map((m: any, mIndex: number) => {
+            if (menuIndex === mIndex) {
               return { ...m, quantity: quantity };
             }
             return m;
@@ -44,14 +44,11 @@ class CustomerBasket extends React.Component<CustomerBasketProps> {
       });
     }
     if (quantity <= 0) {
+      let newBasket = JSON.parse(JSON.stringify(this.props.state.basket));
+      newBasket.menus.splice(menuIndex, 1);
       dispatch({
         type: "SET_BASKET",
-        payload: {
-          ...this.props.state.basket,
-          menus: this.props.state.basket.menus.filter(
-            (m: any) => m._id !== menu._id
-          ),
-        },
+        payload: newBasket,
       });
     }
     if (this.props.state.basket.menus.length === 0) {
@@ -69,6 +66,7 @@ class CustomerBasket extends React.Component<CustomerBasketProps> {
       total += menu.price * menu.quantity;
     });
     total += +this.props.state.tip;
+    if (this.props.state.registerSponsor) total = total * 0.9;
     return Math.round(total * 100) / 100;
   };
 
@@ -118,8 +116,8 @@ class CustomerBasket extends React.Component<CustomerBasketProps> {
                                 className="quantity-buttons"
                                 onClick={() => {
                                   this.changeMenuQuantity(
-                                    menu,
-                                    menu.quantity + 1
+                                    menu.quantity + 1,
+                                    menuIndex
                                   );
                                 }}
                               >
@@ -167,8 +165,8 @@ class CustomerBasket extends React.Component<CustomerBasketProps> {
                                 size="small"
                                 onClick={() => {
                                   this.changeMenuQuantity(
-                                    menu,
-                                    menu.quantity - 1
+                                    menu.quantity - 1,
+                                    menuIndex
                                   );
                                 }}
                               >
@@ -262,6 +260,11 @@ class CustomerBasket extends React.Component<CustomerBasketProps> {
                 <IonText>
                   <h2>Total : {this.calculateTotal() + 2}€</h2>
                 </IonText>
+                {this.props.state.registerSponsor && (
+                  <IonText>
+                    <h2>Promotion de 10% appliquée avec le code promo</h2>
+                  </IonText>
+                )}
                 <IonChip color="primary" className="order-chip" outline>
                   <IonText>
                     <Link to="/order" className="homepage-link">

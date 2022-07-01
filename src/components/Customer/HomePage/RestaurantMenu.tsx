@@ -111,7 +111,7 @@ class CustomerRestaurantMenu extends React.Component<
     menu.items[itemIndex].options.forEach((option: Option) => {
       option.values.forEach((value: Value, valueIndex: number) => {
         if (!value.checked) {
-          delete option.values[valueIndex];
+          option.values.splice(valueIndex, 1);
         }
       });
       options.push(option);
